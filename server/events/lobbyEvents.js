@@ -1,11 +1,11 @@
 const {
   addPlayerToRoom,
-  removePlayerFromRoom,
+  createGameManagerForRoom,
   getRoomBySocketId,
   getRoomPlayers,
   isHost,
   getUsernameBySocketId,
-} = require('../rooms/roomManager');
+} = require('../managers/roomManager');
 
 module.exports = function registerLobbyEvents(io, socket) {
   socket.on('join_room', ({ username, room }) => {
@@ -21,12 +21,17 @@ module.exports = function registerLobbyEvents(io, socket) {
 
     if (!room || !username) return;
 
-    if (isHost(room, socket.id)) {
-      io.to(room).emit('game_started');
-      console.log(`🚀 Jogo iniciado na sala ${room} por ${username}`);
-    } else {
+    if (!isHost(room, socket.id)) {
       socket.emit('error_message', 'Somente o host pode iniciar o jogo.');
+      return;
     }
+
+    const gameManager = createGameManagerForRoom(room);
+    gameManager.startGame();
+
+    io.to(room).emit('game_started', room);
+
+    console.log(`🚀 Jogo iniciado na sala ${room} por ${username}`);
   });
 
   socket.on('room_users', () => {

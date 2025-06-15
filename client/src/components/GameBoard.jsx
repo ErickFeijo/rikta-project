@@ -1,31 +1,41 @@
 import React from 'react';
 import './GameBoard.css';
 
-export default function GameBoard({ playerName, currentTurnPlayer, room }) {
-  const handCards = [
-    { id: 1, name: 'Espada Enferrujada', description: 'Arma fraca' },
-    { id: 2, name: 'Cota de Malha', description: 'Proteção básica' },
-    { id: 3, name: 'Poção de Cura', description: 'Recupera vida' },
-  ];
-
-  const tableCards = [
-    { id: 101, name: 'Dragão', description: 'Monstro forte' },
-    { id: 102, name: 'Mago', description: 'Aliado poderoso' },
-  ];
+export default function GameBoard({ playerName, gameState }) {
+  const currentTurnPlayer = gameState.players.find(p => p.isTurn)?.username;
 
   const isPlayerTurn = playerName === currentTurnPlayer;
+
+  const currentPlayer = gameState.players.find(p => p.username === playerName);
+  const handCards = currentPlayer?.hand || [];
+
+  const tableCards = gameState.tableCards || []; // quando tiver cards ativos em jogo
 
   return (
     <div className="gameboard-container">
       <header className="gameboard-header">
-        <h1>Munchkin Online - Sala: {room}</h1>
+        <h1>Munchkin Online - Sala: {gameState.room}</h1>
         <div className="info">
           <div>Jogador atual: <strong>{currentTurnPlayer}</strong></div>
           <div>Você: <strong>{playerName}</strong></div>
         </div>
       </header>
 
+      <section className="players-status" aria-label="Status dos jogadores">
+        <h3>Jogadores:</h3>
+        <ul>
+          {gameState.players.map(p => (
+            <li key={p.id}>
+              {p.username} - Nível: {p.level} {p.isTurn ? '🎯 (Turno)' : ''}
+              {p.isHost ? ' ⭐ (Host)' : ''}
+            </li>
+          ))}
+        </ul>
+      </section>
+
       <section className="table-cards" aria-label="Cartas na mesa">
+        <h3>Mesa:</h3>
+        {tableCards.length === 0 && <p>Nenhuma carta na mesa ainda.</p>}
         {tableCards.map((card) => (
           <div key={card.id} className="card" title={card.description}>
             <h4>{card.name}</h4>
@@ -35,6 +45,8 @@ export default function GameBoard({ playerName, currentTurnPlayer, room }) {
       </section>
 
       <section className="hand-cards" aria-label="Sua mão de cartas">
+        <h3>Sua mão:</h3>
+        {handCards.length === 0 && <p>Você ainda não tem cartas.</p>}
         {handCards.map((card) => (
           <div key={card.id} className="card" title={card.description}>
             <h4>{card.name}</h4>

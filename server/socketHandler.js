@@ -1,4 +1,4 @@
-const { addPlayerToRoom, removePlayerFromRoom, getRoomPlayers, getRoomBySocketId, getUsernameBySocketId, isHost } = require('./rooms/roomManager');
+const { addPlayerToRoom, removePlayerFromRoom, getRoomPlayers, getRoomBySocketId, getUsernameBySocketId, isHost } = require('./managers/roomManager');
 const registerLoginEvents = require('./events/loginEvents');
 const registerLobbyEvents = require('./events/lobbyEvents');
 const registerGameEvents = require('./events/gameEvents');
@@ -17,7 +17,7 @@ module.exports = function (io) {
 
       removePlayerFromRoom(room, socket.id);
       const updatedPlayers = getRoomPlayers(room);
-      
+
       io.to(room).emit('room_users', updatedPlayers);
 
       console.log(`❌ Jogador saiu: ${socket.id} da sala ${room}`);

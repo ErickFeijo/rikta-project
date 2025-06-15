@@ -1,13 +1,15 @@
+
+const {
+  getGameManager,
+} = require('../managers/roomManager');
+
 module.exports = function registerGameEvents(io, socket) {
-  socket.on('player_ready', () => {
-    // lógica de "pronto"
+
+  socket.on('get_game_state', ({ room }) => {
+    const game = getGameManager(room);
+    if (game) {
+      socket.emit('game_state', game.getPublicState());
+    }
   });
 
-  socket.on('play_card', (cardData) => {
-    // lógica de jogar carta
-  });
-
-  socket.on('end_turn', () => {
-    // lógica de passar o turno
-  });
 };
