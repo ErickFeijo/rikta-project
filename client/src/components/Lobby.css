@@ -1,0 +1,83 @@
+.waitingroom-container {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #1f2937, #111827);
+  color: white;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem 1rem;
+  gap: 2rem;
+}
+
+.waitingroom-header {
+  text-align: center;
+}
+
+.waitingroom-header h2 {
+  font-weight: 700;
+  font-size: 2rem;
+  margin-bottom: 0.3rem;
+}
+
+.waitingroom-header p {
+  font-size: 1rem;
+  opacity: 0.85;
+}
+
+.player-list {
+  background-color: #374151;
+  border-radius: 12px;
+  max-width: 400px;
+  width: 100%;
+  padding: 1.5rem;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.7);
+}
+
+.player-list h3 {
+  font-weight: 600;
+  margin-bottom: 1rem;
+  font-size: 1.3rem;
+}
+
+.player-list ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.player-list li {
+  padding: 0.6rem 1rem;
+  border-radius: 8px;
+  background-color: #4b5563;
+  margin-bottom: 0.6rem;
+  font-weight: 500;
+  transition: background-color 0.2s ease;
+}
+
+.player-list li.current-player {
+  background-color: #2563eb;
+  font-weight: 700;
+}
+
+.start-game-btn {
+  margin-top: 2rem;
+  background-color: #2563eb;
+  color: white;
+  border: none;
+  border-radius: 9999px;
+  font-weight: 700;
+  font-size: 1.1rem;
+  padding: 0.8rem 2rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.start-game-btn:hover:not(:disabled) {
+  background-color: #1d4ed8;
+}
+
+.start-game-btn:disabled {
+  background-color: #6b7280;
+  cursor: not-allowed;
+}

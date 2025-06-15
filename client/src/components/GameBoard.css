@@ -1,0 +1,116 @@
+/* Container principal */
+.gameboard-container {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #1f2937 0%, #111827 50%, #1f2937 100%);
+  color: white;
+  display: flex;
+  flex-direction: column;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Header */
+.gameboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  background-color: #111827;
+  border-bottom: 1px solid #374151;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+}
+
+.gameboard-header h1 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+}
+
+.gameboard-header .info {
+  display: flex;
+  gap: 2rem;
+  font-weight: 600;
+}
+
+/* Mesa de cartas */
+.table-cards {
+  flex-grow: 1;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1.5rem;
+  padding: 2rem;
+  max-width: 900px;
+  margin: 0 auto;
+  align-content: center;
+}
+
+.card {
+  background-color: #374151;
+  border-radius: 12px;
+  padding: 1rem;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.7);
+  cursor: pointer;
+  transition: transform 0.2s ease-in-out;
+}
+
+.card:hover {
+  transform: scale(1.05);
+}
+
+.card h4 {
+  margin-bottom: 0.4rem;
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+.card p {
+  font-size: 0.85rem;
+  opacity: 0.8;
+}
+
+/* Mão do jogador */
+.hand-cards {
+  background-color: #111827;
+  border-top: 1px solid #374151;
+  padding: 1rem 2rem;
+  display: flex;
+  overflow-x: auto;
+  gap: 1rem;
+  max-height: 130px;
+}
+
+.hand-cards .card {
+  min-width: 140px;
+  flex-shrink: 0;
+  padding: 0.8rem;
+}
+
+.hand-cards .card:hover {
+  transform: scale(1.1);
+}
+
+/* Botão final */
+.finish-turn-btn {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  background-color: #2563eb;
+  color: white;
+  border: none;
+  padding: 0.8rem 1.8rem;
+  border-radius: 9999px;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(37, 99, 235, 0.6);
+  transition: background-color 0.3s ease;
+}
+
+.finish-turn-btn:hover:not(:disabled) {
+  background-color: #1d4ed8;
+}
+
+.finish-turn-btn:disabled {
+  background-color: #6b7280;
+  cursor: not-allowed;
+  box-shadow: none;
+}
