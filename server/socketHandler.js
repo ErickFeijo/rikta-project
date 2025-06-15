@@ -17,7 +17,8 @@ module.exports = function (io) {
 
       removePlayerFromRoom(room, socket.id);
       const updatedPlayers = getRoomPlayers(room);
-      io.to(room).emit('room_users', updatedPlayers.map(p => ({ username: p.username })));
+      
+      io.to(room).emit('room_users', updatedPlayers);
 
       console.log(`❌ Jogador saiu: ${socket.id} da sala ${room}`);
     });
