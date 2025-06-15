@@ -1,0 +1,27 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Debug Backend",
+      "type": "pwa-node",
+      "request": "launch",
+      "program": "${workspaceFolder}/server/index.js",
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}/server"
+    },
+    {
+      "name": "Debug Frontend",
+      "type": "pwa-chrome",
+      "request": "launch",
+      "url": "http://localhost:5173",
+      "webRoot": "${workspaceFolder}/client",
+      "preLaunchTask": "Run Frontend"
+    }
+  ],
+  "compounds": [
+    {
+      "name": "Debug Full Stack",
+      "configurations": ["Debug Backend", "Debug Frontend"]
+    }
+  ]
+}

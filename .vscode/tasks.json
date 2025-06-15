@@ -1,0 +1,21 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Run Backend",
+      "type": "shell",
+      "command": "node server/index.js",
+      "problemMatcher": []
+    },
+    {
+      "label": "Run Frontend",
+      "type": "shell",
+      "command": "npm run dev",
+      "options": {
+        "cwd": "${workspaceFolder}/client"
+      },
+      "problemMatcher": [],
+      "isBackground": true
+    }
+  ]
+}
