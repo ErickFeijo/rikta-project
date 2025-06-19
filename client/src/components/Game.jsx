@@ -8,17 +8,29 @@ export default function Game({ room, username }) {
   const [gameState, setGameState] = useState(null);
 
   useEffect(() => {
+    // Ao entrar, avisa o servidor que entrou na sala
+    socket.emit('joinRoom', { room, username });
+
     socket.on('game_state', (state) => {
       setGameState(state);
     });
 
-    // pedir o estado inicial se o usuário entrou no meio do jogo
+    socket.on('errorMessage', (msg) => {
+      alert(msg);
+    });
+
+    // Se o jogador entrar no meio do jogo, pode pedir o estado atual
     socket.emit('get_game_state', { room });
 
     return () => {
       socket.off('game_state');
+      socket.off('errorMessage');
     };
-  }, [room]);
+  }, [room, username]);
+
+  const handleKickDoor = () => {
+    socket.emit('kickDoor');
+  };
 
   if (!gameState) return <p>Carregando estado do jogo...</p>;
 
@@ -26,6 +38,7 @@ export default function Game({ room, username }) {
     <GameBoard
       playerName={username}
       gameState={gameState}
+      onKickDoor={handleKickDoor}
     />
   );
 }

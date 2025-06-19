@@ -7,7 +7,7 @@ const rooms = {};
     }
   }
 */
-const GameManager = require('./gameManager');
+const GameManager = require('./GameManager');
 
 function addPlayerToRoom(room, username, socketId) {
   if (!rooms[room]) rooms[room] = { players: [], gameManager: null };

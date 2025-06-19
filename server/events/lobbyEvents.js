@@ -5,7 +5,7 @@ const {
   getRoomPlayers,
   isHost,
   getUsernameBySocketId,
-} = require('../managers/roomManager');
+} = require('../managers/RoomManager');
 
 module.exports = function registerLobbyEvents(io, socket) {
   socket.on('join_room', ({ username, room }) => {
@@ -30,6 +30,7 @@ module.exports = function registerLobbyEvents(io, socket) {
     gameManager.startGame();
 
     io.to(room).emit('game_started', room);
+    io.to(room).emit('gameState', gameManager.getPublicState());
 
     console.log(`🚀 Jogo iniciado na sala ${room} por ${username}`);
   });

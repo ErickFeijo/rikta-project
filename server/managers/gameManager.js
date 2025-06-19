@@ -1,121 +1,62 @@
-const { v4: uuidv4 } = require('uuid'); // Para gerar IDs únicos nas cartas
+const Player = require('../models/Player');
+const DeckManager = require('./DeckManager');
+const TableManager = require('./TableManager');
+const TurnManager = require('./TurnManager');
 
 class GameManager {
-  constructor(roomName, players) {
+  constructor(roomName, playersRaw) {
     this.room = roomName;
-    this.state = 'waiting'; // waiting | playing | ended
-    this.phase = 'setup';   // setup | draw | battle | loot | charity
+    this.state = 'waiting';
+    this.phase = 'setup';
 
-    this.players = players.map((p, i) => ({
-      id: p.id,
-      username: p.username,
-      level: 1,
-      hand: [],
-      isHost: i === 0,
-      isTurn: i === 0
-    }));
-
-    this.turnIndex = 0;
-    this.deck = this.createDeck();
-    this.discardPile = [];
-    this.tableCards = [];
+    this.players = playersRaw.map((p, i) => new Player(p.id, p.username, i === 0));
+    this.deckManager = new DeckManager();
+    this.tableManager = new TableManager();
+    this.turnManager = new TurnManager(this.players);
   }
 
-  createDeck() {
-    const baseCards = [
-      { name: 'Goblin', type: 'monster', description: 'Monstro fraco' },
-      { name: 'Dragão', type: 'monster', description: 'Monstro forte' },
-      { name: 'Poção de Força', type: 'boost', description: 'Aumenta sua força em combate' },
-      { name: 'Armadura de Couro', type: 'item', description: 'Defesa básica' },
-      { name: 'Tesouro', type: 'loot', description: 'Ganhe 1 nível' },
-    ];
-
-    // Duplica algumas cartas e gera ID único
-    let fullDeck = [];
-    baseCards.forEach(card => {
-      const copies = card.type === 'monster' ? 3 : 2;
-      for (let i = 0; i < copies; i++) {
-        fullDeck.push({ ...card, id: uuidv4() });
-      }
-    });
-
-    // Embaralhar
-    for (let i = fullDeck.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [fullDeck[i], fullDeck[j]] = [fullDeck[j], fullDeck[i]];
-    }
-
-    return fullDeck;
-  }
-
-  startGame() {
+ startGame() {
     this.state = 'playing';
-    this.phase = 'draw';
-    this.dealCards();
-    console.log(`🎮 Jogo iniciado na sala ${this.room}`);
+    this.phase = 'setup';
+    this.deckManager.dealCards(this.players, 4);
   }
 
-  dealCards() {
-    const cardsPerPlayer = 4;
-    for (let player of this.players) {
-      player.hand = this.deck.splice(0, cardsPerPlayer);
-    }
-  }
+  kickDoor(playerId) {
+    const player = this.players.find(p => p.id === playerId);
+    if (!player) return { error: 'Jogador não encontrado' };
+    if (!player.isTurn) return { error: 'Não é seu turno' };
+    if (this.phase !== 'kickDoor') return { error: 'Não pode abrir a porta agora' };
 
-  getCurrentPlayer() {
-    return this.players[this.turnIndex];
+    const card = this.deckManager.drawDoorCard();
+    if (!card) return { error: 'Baralho de portas vazio' };
+
+    this.tableManager.addCard(card);
+
+    if (card.type === 'monster') {
+      this.phase = 'combat';
+    } else if (card.type === 'effect') {
+      this.phase = 'resolveEffect';
+    } 
+
+    return { success: true, card, phase: this.phase };
   }
 
   advancePhase() {
-    switch (this.phase) {
-      case 'draw':
-        this.phase = 'battle';
-        break;
-      case 'battle':
-        this.phase = 'loot';
-        break;
-      case 'loot':
-        this.phase = 'charity';
-        break;
-      case 'charity':
-        this.endTurn();
-        break;
-      default:
-        this.phase = 'draw';
+    const phaseOrder = ['setup', 'draw', 'battle', 'loot', 'charity'];
+    const currentIndex = phaseOrder.indexOf(this.phase);
+
+    if (currentIndex === phaseOrder.length - 1) {
+      this.phase = 'setup';
+      this.endTurn();
+    } else {
+      this.phase = phaseOrder[currentIndex + 1];
     }
   }
 
   endTurn() {
-    this.players[this.turnIndex].isTurn = false;
-    this.turnIndex = (this.turnIndex + 1) % this.players.length;
-    this.players[this.turnIndex].isTurn = true;
-    this.phase = 'draw';
-    this.tableCards = [];
-    console.log(`🔄 Turno de ${this.players[this.turnIndex].username}`);
-  }
-
-  playCard(playerId, cardId) {
-    const player = this.players.find(p => p.id === playerId);
-    if (!player || !player.isTurn) return { error: 'Não é seu turno' };
-
-    const index = player.hand.findIndex(c => c.id === cardId);
-    if (index === -1) return { error: 'Carta não encontrada na mão' };
-
-    const card = player.hand.splice(index, 1)[0];
-    this.tableCards.push(card); // Simula jogada para a mesa
-    this.discardPile.push(card); // Simula descarte
-
-    // TODO: aplicar efeito real da carta
-    return { success: true, cardPlayed: card };
-  }
-
-  drawCard(playerId) {
-    const player = this.players.find(p => p.id === playerId);
-    if (!player || !player.isTurn) return { error: 'Não é seu turno' };
-
-    const card = this.deck.shift();
-    if (card) player.hand.push(card);
-    return card || null;
+    this.turnManager.getCurrentPlayer().isTurn = false;
+    this.turnManager.advanceTurn();
+    this.tableManager.resetTable();
   }
 
   getPublicState() {
@@ -129,9 +70,12 @@ class GameManager {
         level: p.level,
         isTurn: p.isTurn,
         isHost: p.isHost,
+        hand: p.hand,
       })),
-      tableCards: this.tableCards,
-      topDiscardCard: this.discardPile[this.discardPile.length - 1] || null
+      tableCards: this.tableManager.tableCards,
+      topDiscardCard: this.tableManager.getTopDiscard(),
+      doorDeckCount: this.deckManager.doorDeck.length,
+      treasureDeckCount: this.deckManager.treasureDeck.length,
     };
   }
 
