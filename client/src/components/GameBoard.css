@@ -280,7 +280,7 @@ body, html {
   grid-column: 3;
   grid-row: 2;
 }
-
+/* 
 .equipment-slot {
   width: 70px;
   height: 110px;
@@ -296,6 +296,29 @@ body, html {
   padding: 6px;
   flex-direction: column;
   margin: 6px 0;
+} */
+
+.equipment-slot {
+  width: 70px;
+  height: 96px;
+  border: 2px dashed #888;
+  border-radius: 8px;
+  background-color: #333;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-size: 14px;
+  padding: 6px;
+  flex-direction: column;
+  margin: 6px 0;
+  overflow: hidden; /* Para garantir que o card não ultrapasse */
+}
+
+.equipment-slot:has(.card-container) {
+  border: none;
+  background: none;
 }
 
 .equipment-icon {

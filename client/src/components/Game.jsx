@@ -1,14 +1,12 @@
+// components/Game.js
 import React, { useEffect, useState } from 'react';
 import GameBoard from './GameBoard';
-import io from 'socket.io-client';
-
-const socket = io('http://localhost:3000');
+import { socket } from '../socket';
 
 export default function Game({ room, username }) {
   const [gameState, setGameState] = useState(null);
 
   useEffect(() => {
-    // Ao entrar, avisa o servidor que entrou na sala
     socket.emit('joinRoom', { room, username });
 
     socket.on('game_state', (state) => {
@@ -19,7 +17,6 @@ export default function Game({ room, username }) {
       alert(msg);
     });
 
-    // Se o jogador entrar no meio do jogo, pode pedir o estado atual
     socket.emit('get_game_state', { room });
 
     return () => {
@@ -32,6 +29,10 @@ export default function Game({ room, username }) {
     socket.emit('kickDoor');
   };
 
+  const handleEquipCard = (cardId) => {
+    socket.emit('equip_card', { cardId });
+  };
+
   if (!gameState) return <p>Carregando estado do jogo...</p>;
 
   return (
@@ -39,6 +40,7 @@ export default function Game({ room, username }) {
       playerName={username}
       gameState={gameState}
       onKickDoor={handleKickDoor}
+      onEquipCard={handleEquipCard}
     />
   );
 }

@@ -1,6 +1,7 @@
 
 const {
   getGameManager,
+  getRoomBySocketId
 } = require('../managers/RoomManager');
 
 module.exports = function registerGameEvents(io, socket) {
@@ -29,6 +30,19 @@ module.exports = function registerGameEvents(io, socket) {
     io.to(playerRoom).emit('gameState', game.getPublicState());
     io.to(playerRoom).emit('cardOpened', result.card);
   });
+
+socket.on('equip_card', ({ cardId }) => {
+  const room = getRoomBySocketId(socket.id);
+  if (!room) return;
+
+  const game = getGameManager(room);
+  if (!game) return;
+
+  const result = game.equipCard(socket.id, cardId);
+  if (result.error) return socket.emit('errorMessage', result.error);
+
+  socket.emit('game_state', game.getPublicState());
+});
 
 
 };

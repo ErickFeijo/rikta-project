@@ -33,9 +33,9 @@ export default function Lobby({
       {isHost && (
         <button
           className="start-game-btn"
-          disabled={players.length < 2}
+          disabled={players.length < 1}
           onClick={onStartGame}
-          aria-disabled={players.length < 2}
+          aria-disabled={players.length < 1}
         >
           Iniciar Jogo
         </button>

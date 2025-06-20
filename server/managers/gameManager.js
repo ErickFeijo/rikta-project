@@ -9,7 +9,7 @@ class GameManager {
     this.state = 'waiting';
     this.phase = 'setup';
 
-    this.players = playersRaw.map((p, i) => new Player(p.id, p.username, i === 0));
+    this.players = playersRaw.map((p, i) => new Player(p.socketId, p.username, i === 0));
     this.deckManager = new DeckManager();
     this.tableManager = new TableManager();
     this.turnManager = new TurnManager(this.players);
@@ -19,6 +19,18 @@ class GameManager {
     this.state = 'playing';
     this.phase = 'setup';
     this.deckManager.dealCards(this.players, 4);
+  }
+
+  equipCard(playerId, cardId) {
+    const player = this.players.find(p => p.id === playerId);
+    if (!player) return { error: 'Jogador não encontrado' };
+    if (!player.isTurn || this.phase !== 'setup') return { error: 'Não pode equipar agora' };
+
+    const card = player.hand.find(c => c.id === cardId);
+    if (!card) return { error: 'Carta não está na mão' };
+
+    const result = player.equip(card);
+    return result;
   }
 
   kickDoor(playerId) {
@@ -71,6 +83,7 @@ class GameManager {
         isTurn: p.isTurn,
         isHost: p.isHost,
         hand: p.hand,
+        equipment: p.equipment
       })),
       tableCards: this.tableManager.tableCards,
       topDiscardCard: this.tableManager.getTopDiscard(),
