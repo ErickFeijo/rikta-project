@@ -63,7 +63,7 @@ body, html {
   flex-direction: column;
   padding: 16px;
   box-sizing: border-box;
-  background-image: url('/assets/board-background.png');
+  background-image: url('/assets/board-backgroundV2.png');
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
@@ -257,16 +257,16 @@ body, html {
   display: grid;
   grid-template-columns: 1fr auto 1fr;
   grid-template-rows: repeat(3, auto);
-  gap: 12px;
+  /* gap: 12px; */
   align-items: center;
   justify-items: center;
   margin-top: 16px;
 }
 
 .body-slots {
-  display: flex;
+  /* display: flex; */
   flex-direction: column;
-  gap: 12px;
+  /* gap: 12px; */
   grid-column: 2;
   grid-row: 1 / span 3;
 }
@@ -279,41 +279,6 @@ body, html {
 .right-hand {
   grid-column: 3;
   grid-row: 2;
-}
-/* 
-.equipment-slot {
-  width: 70px;
-  height: 110px;
-  border: 2px dashed #888;
-  border-radius: 8px;
-  background-color: #333;
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  font-size: 14px;
-  padding: 6px;
-  flex-direction: column;
-  margin: 6px 0;
-} */
-
-.equipment-slot {
-  width: 70px;
-  height: 96px;
-  border: 2px dashed #888;
-  border-radius: 8px;
-  background-color: #333;
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  font-size: 14px;
-  padding: 6px;
-  flex-direction: column;
-  margin: 6px 0;
-  overflow: hidden; /* Para garantir que o card não ultrapasse */
 }
 
 .equipment-slot:has(.card-container) {
@@ -361,4 +326,60 @@ body, html {
 
 .toggle-equipment:checked + .equipment-label + .equipment-panel {
   display: block;
+}
+
+.card-placeholder {
+  transition: all 0.3s ease-in-out;
+  animation: reveal 0.4s ease-in-out;
+}
+
+@keyframes reveal {
+  0% {
+    transform: scale(0.9);
+    opacity: 0.3;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+.door-result {
+  flex: 1;
+  display: flex;
+  align-items: center;     /* Alinha verticalmente */
+  justify-content: center; /* Alinha horizontalmente */
+  min-height: 200px;
+  padding: 12px;
+}
+
+/* Equipment panel precisa ser relative para posicionar os slots extras */
+.equipment-panel {
+  position: relative; /* para posicionamento absoluto dos slots extras */
+  /* mantém seu padding e outras regras já existentes */
+}
+
+/* Slot da classe no canto superior direito */
+.equipment-slot-top-right {
+  position: absolute;
+  top: 60px;
+  z-index: 15;
+}
+
+/* Se o slot contiver card, remove a borda e bg */
+.equipment-slot-top-right:has(.card-container) {
+  border: none;
+  background: none;
+}
+
+/* Slot do escudeiro no canto inferior direito */
+.equipment-slot-bottom-right {
+  position: absolute;
+  bottom: 15px;
+  right: 12px;
+  z-index: 15;
+}
+
+.equipment-slot-bottom-right:has(.card-container) {
+  border: none;
+  background: none;
 }

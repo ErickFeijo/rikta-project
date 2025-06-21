@@ -1,0 +1,43 @@
+.equipment-slot {
+  transform: scale(0.8);
+  width: 104px;
+  height: 150px;
+  border: 2px dashed #888;
+  border-radius: 8px;
+  background-color: #222;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-size: 14px;
+  padding: 0px;
+  transition: all 0.2s ease;
+}
+
+.equipment-slot.filled {
+  border: none;
+  background: none;
+  padding: 0;
+}
+
+/* Aqui o card dentro do equipment slot fica menor */
+.equipment-card-wrapper > * {
+  transform-origin: top center;
+  /* Ajusta o tamanho do wrapper para evitar overflow e permitir espaçamento correto */
+  display: inline-block;
+  width: 100%;
+  height: 150px;
+}
+
+/* Ícone e label continuam iguais */
+.equipment-icon {
+  font-size: 20px;
+  margin-bottom: 4px;
+}
+
+.equipment-label {
+  font-size: 13px;
+  font-weight: 500;
+}

@@ -67,6 +67,15 @@ function createGameManagerForRoom(room) {
   return rooms[room].gameManager;
 }
 
+function restartGameManagerForRoom(room) {
+  if (!rooms[room]) return null;
+
+  const players = rooms[room].players;
+  rooms[room].gameManager = new GameManager(room, players);
+
+  return rooms[room].gameManager;
+}
+
 function getGameManager(room) {
   return rooms[room]?.gameManager || null;
 }
@@ -87,4 +96,5 @@ module.exports = {
   createGameManagerForRoom,
   getGameManager,
   removeGameManager,
+  restartGameManagerForRoom
 };

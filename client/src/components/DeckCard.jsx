@@ -8,8 +8,8 @@ export default function DeckCard({ type, onClick, isClickable }) {
 
   return (
     <div
-      className={`deck-card ${isClickable ? 'clickable' : ''}`}
-      onClick={isClickable ? onClick : null}
+      className={`deck-card ${isClickable ? 'clickable' : 'disabled'}`}
+      onClick={isClickable ? onClick : undefined}
       title={type === 'treasure' ? 'Tesouro' : 'Porta'}
     >
       <img src={imageSrc} alt={`Carta de ${type}`} />

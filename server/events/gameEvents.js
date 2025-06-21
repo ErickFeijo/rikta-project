@@ -1,7 +1,10 @@
 
 const {
   getGameManager,
-  getRoomBySocketId
+  getRoomBySocketId,
+  isHost,
+  getUsernameBySocketId,
+  restartGameManagerForRoom
 } = require('../managers/RoomManager');
 
 module.exports = function registerGameEvents(io, socket) {
@@ -14,10 +17,10 @@ module.exports = function registerGameEvents(io, socket) {
   });
 
   socket.on('kickDoor', () => {
-    const playerRoom = [...socket.rooms].find(r => r !== socket.id);
-    if (!playerRoom) return;
+    const room = getRoomBySocketId(socket.id);
+    if (!room) return;
 
-    const game = games[playerRoom];
+    const game = getGameManager(room);
     if (!game) return;
 
     const result = game.kickDoor(socket.id);
@@ -27,8 +30,8 @@ module.exports = function registerGameEvents(io, socket) {
       return;
     }
 
-    io.to(playerRoom).emit('gameState', game.getPublicState());
-    io.to(playerRoom).emit('cardOpened', result.card);
+    // io.to(room).emit('gameState', game.getPublicState());
+  socket.emit('game_state', game.getPublicState());
   });
 
 socket.on('equip_card', ({ cardId }) => {
@@ -43,6 +46,27 @@ socket.on('equip_card', ({ cardId }) => {
 
   socket.emit('game_state', game.getPublicState());
 });
+
+socket.on('restart_game', () => {
+  const room = getRoomBySocketId(socket.id);
+  const username = getUsernameBySocketId(socket.id);
+  if (!room || !username) return;
+
+  if (!isHost(room, socket.id)) {
+    socket.emit('error_message', 'Somente o host pode reiniciar o jogo.');
+    return;
+  }
+
+  const gameManager = restartGameManagerForRoom(room);
+  gameManager.startGame();
+
+  io.to(room).emit('game_restarted', room);
+  io.to(room).emit('game_state', gameManager.getPublicState());
+
+  console.log(`🔁 Jogo reiniciado na sala ${room} por ${username}`);
+});
+
+
 
 
 };

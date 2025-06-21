@@ -1,0 +1,106 @@
+/* Painel lateral fixo */
+.equipment-tab {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  z-index: 100;
+  font-family: sans-serif;
+}
+
+/* Toggle oculto e label visível */
+.toggle-equipment {
+  display: none;
+}
+
+.equipment-label {
+  background-color: #333;
+  color: #fff;
+  padding: 8px 12px;
+  cursor: pointer;
+  border-top-right-radius: 8px;
+  display: inline-block;
+  font-size: 14px;
+}
+
+.equipment-panel {
+  display: none;
+  background-color: #222;
+  color: white;
+  padding: 16px;
+  border-top-right-radius: 10px;
+  width: 360px;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.5);
+}
+
+.toggle-equipment:checked + .equipment-label + .equipment-panel {
+  display: block;
+}
+
+.equipment-title {
+  font-size: 16px;
+  font-weight: bold;
+  margin-bottom: 12px;
+  text-align: center;
+}
+
+/* Grade organizada: 3 colunas */
+.equipment-layout-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  justify-items: center;
+  align-items: center;
+}
+
+/* Slot padrão */
+.equipment-slot {
+  width: 100px;
+  height: 130px;
+  border: 2px dashed #666;
+  border-radius: 8px;
+  background-color: #111;
+  color: #ccc;
+  font-size: 14px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 6px;
+  transition: all 0.2s ease;
+}
+
+.equipment-slot:hover {
+  background-color: #1c1c1c;
+  border-color: #aaa;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+  transform: scale(1.03);
+}
+
+.equipment-slot .equipment-icon {
+  font-size: 20px;
+  margin-bottom: 6px;
+}
+
+.equipment-slot .equipment-label {
+  font-size: 13px;
+}
+
+/* Remover bordas se estiver com uma carta */
+.equipment-slot:has(.card-container) {
+  border: none;
+  background: none;
+  padding: 0;
+}
+
+.equipment-bonus {
+  position: absolute;
+  top: 16px;
+  right: 100px; /* espaço para não sobrepor o slot da classe */
+  font-size: 16px;
+  font-weight: bold;
+  color: #f5d37d;
+  background-color: rgba(0,0,0,0.4);
+  padding: 4px 8px;
+  border-radius: 6px;
+}

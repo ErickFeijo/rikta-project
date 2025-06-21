@@ -2,6 +2,7 @@ const Player = require('../models/Player');
 const DeckManager = require('./DeckManager');
 const TableManager = require('./TableManager');
 const TurnManager = require('./TurnManager');
+const BattleManager = require('./BattleManager');
 
 class GameManager {
   constructor(roomName, playersRaw) {
@@ -13,6 +14,7 @@ class GameManager {
     this.deckManager = new DeckManager();
     this.tableManager = new TableManager();
     this.turnManager = new TurnManager(this.players);
+    this.battleManager = new BattleManager();
   }
 
  startGame() {
@@ -37,15 +39,16 @@ class GameManager {
     const player = this.players.find(p => p.id === playerId);
     if (!player) return { error: 'Jogador não encontrado' };
     if (!player.isTurn) return { error: 'Não é seu turno' };
-    if (this.phase !== 'kickDoor') return { error: 'Não pode abrir a porta agora' };
+    if (this.phase !== 'setup') return { error: 'Não pode abrir a porta agora' };
 
     const card = this.deckManager.drawDoorCard();
     if (!card) return { error: 'Baralho de portas vazio' };
 
-    this.tableManager.addCard(card);
+    this.tableManager.playToTable(card);
 
     if (card.type === 'monster') {
       this.phase = 'combat';
+      this.battleManager.startBattle(playerId, card);
     } else if (card.type === 'effect') {
       this.phase = 'resolveEffect';
     } 
@@ -72,6 +75,10 @@ class GameManager {
   }
 
   getPublicState() {
+    const cardOpened = this.tableManager.tableCards.length > 0
+      ? this.tableManager.tableCards[this.tableManager.tableCards.length - 1]
+      : null;
+
     return {
       room: this.room,
       state: this.state,
@@ -85,7 +92,14 @@ class GameManager {
         hand: p.hand,
         equipment: p.equipment
       })),
-      tableCards: this.tableManager.tableCards,
+      cardOpened: cardOpened ? {
+        id: cardOpened.id,
+        name: cardOpened.name,
+        description: cardOpened.description,
+        type: cardOpened.type,
+        strength: cardOpened.strength ?? null,
+      } : null,
+      battleState: this.battleManager.getPublicState(this.players),
       topDiscardCard: this.tableManager.getTopDiscard(),
       doorDeckCount: this.deckManager.doorDeck.length,
       treasureDeckCount: this.deckManager.treasureDeck.length,

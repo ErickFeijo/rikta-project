@@ -13,7 +13,7 @@ export default function Game({ room, username }) {
       setGameState(state);
     });
 
-    socket.on('errorMessage', (msg) => {
+    socket.on('errorMessage', (msg) => { 
       alert(msg);
     });
 
@@ -22,6 +22,7 @@ export default function Game({ room, username }) {
     return () => {
       socket.off('game_state');
       socket.off('errorMessage');
+      socket.off('cardOpened');
     };
   }, [room, username]);
 
@@ -33,14 +34,57 @@ export default function Game({ room, username }) {
     socket.emit('equip_card', { cardId });
   };
 
+  const handleRefreshGameState = () => {
+    socket.emit('get_game_state', { room });
+  };
+
   if (!gameState) return <p>Carregando estado do jogo...</p>;
 
   return (
-    <GameBoard
-      playerName={username}
-      gameState={gameState}
-      onKickDoor={handleKickDoor}
-      onEquipCard={handleEquipCard}
-    />
+    <>
+     <button
+        onClick={handleRefreshGameState}
+        style={{
+          position: 'fixed',
+          bottom: '20px',
+          right: '20px',
+          padding: '10px 14px',
+          backgroundColor: '#2c3e50',
+          color: 'white',
+          border: 'none',
+          borderRadius: '8px',
+          boxShadow: '0 2px 8px rgba(0,0,0,0.3)',
+          cursor: 'pointer',
+          zIndex: 1000
+        }}
+      >
+        🔄 Atualizar
+      </button>
+      <button
+        onClick={() => socket.emit('restart_game')}
+        style={{
+          position: 'fixed',
+          bottom: '70px',
+          right: '20px',
+          padding: '10px 14px',
+          backgroundColor: '#c0392b',
+          color: 'white',
+          border: 'none',
+          borderRadius: '8px',
+          boxShadow: '0 2px 8px rgba(0,0,0,0.3)',
+          cursor: 'pointer',
+          zIndex: 1000
+        }}
+      >
+        🔁 Reiniciar Jogo
+      </button>
+
+      <GameBoard
+        playerName={username}
+        gameState={gameState}
+        onKickDoor={handleKickDoor}
+        onEquipCard={handleEquipCard}
+      />
+    </>
   );
 }

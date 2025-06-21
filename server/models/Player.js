@@ -8,9 +8,12 @@ class Player {
     this.equipment = {
       head: null,
       body: null,
+      legs: null,
       feet: null,
       leftHand: null,
       rightHand: null,
+      class: null,
+      helper: null
     };
 
     this.isHost = isHost;
@@ -23,8 +26,11 @@ class Player {
     if (card.slot) {
       const slotMap = {
         head: 'head',
-        armor: 'body',
+        body: 'body',
         feet: 'feet',
+        legs: 'legs',
+        class: 'class',
+        helper: 'helper',
       };
 
       const targetSlot = slotMap[card.slot];

@@ -1,12 +1,17 @@
 import React from 'react';
-import "./Lobby.css";
 
 export default function PlayerList({ players }) {
   return (
-    <ul className="space-y-1 list-disc list-inside mb-4">
-      {players.map((p, i) => (
-        <li key={i}>{p}</li>
-      ))}
-    </ul>
+    <aside className="sidebar">
+      <h2>Jogadores</h2>
+      <ul>
+        {players.map(p => (
+          <li key={p.id}>
+            <strong>{p.username}{p.isHost && ' ⭐'}</strong> — Nível <strong>{p.level}</strong>
+            {p.isTurn && ' 🎯'}
+          </li>
+        ))}
+      </ul>
+    </aside>
   );
 }

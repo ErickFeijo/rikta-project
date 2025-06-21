@@ -2,19 +2,65 @@ const { v4: uuidv4 } = require('uuid');
 const CardTypes = require('../constants/cardTypes');
 
 const monsters = [
-  { name: 'Goblin', description: 'Um monstro fraco. +1 de força.', strength: 1 },
-  { name: 'Esqueleto', description: 'Assustador, mas frágil. +2 de força.', strength: 2 },
-  { name: 'Orc', description: 'Brutamontes. +3 de força.', strength: 3 },
-  { name: 'Troll das Cavernas', description: 'Causa problemas. +4 de força.', strength: 4 },
-  { name: 'Dragão', description: 'Um desafio formidável. +6 de força.', strength: 6 },
-  { name: 'Lagarto', description: 'Um asd. +asd força.', strength: 5 },
+  {
+    name: 'Zumbi de Escritório',
+    description: 'Ainda cheira a café. Força +1.',
+    strength: 1,
+  },
+  {
+    name: 'Influencer Infectado',
+    description: 'Tenta te morder e ainda te vender curso. Força +2.',
+    strength: 2,
+  },
+  {
+    name: 'Motoboy Zumbi',
+    description: 'Entrega mordidas em alta velocidade. Força +3.',
+    strength: 3,
+  },
+  {
+    name: 'Zumbi Crossfiteiro',
+    description: 'Grita "Boraaa!" antes de atacar. Força +4.',
+    strength: 4,
+  },
+  {
+    name: 'Mutante Radioativo',
+    description: 'Brilha no escuro e morde forte. Força +5.',
+    strength: 5,
+  },
+  {
+    name: 'Ex Chefe Ressuscitado',
+    description: 'Te persegue com reuniões eternas. Força +6.',
+    strength: 6,
+  },
+  {
+    name: 'Horda Descontrolada',
+    description: 'Zumbis demais pra contar. Força +7.',
+    strength: 7,
+  },
+  {
+    name: 'Zumbi de Estimação',
+    description: 'Fofo, mas ainda quer te devorar. Força +1.',
+    strength: 1,
+  },
 ];
 
 const curses = [
-  { name: 'Perde um nível', description: 'Você perde 1 nível imediatamente.' },
-  { name: 'Caiu na armadilha', description: 'Descarte uma carta aleatória da mão.' },
-  { name: 'Quebrou seu equipamento', description: 'Descarte um item equipado.' },
-  { name: 'Amnésia súbita', description: 'Você não pode jogar cartas nesta rodada.' },
+  {
+    name: 'Perde o Sinal do Rádio',
+    description: 'Você não pode pedir ajuda nesta rodada.',
+  },
+  {
+    name: 'Travou a Tranca',
+    description: 'Você perde 1 nível tentando abrir a porta.',
+  },
+  {
+    name: 'Comida Estragada',
+    description: 'Descarta uma carta da mão.',
+  },
+  {
+    name: 'Armadilha de Urso',
+    description: 'Você perde um equipamento à sua escolha.',
+  },
 ];
 
 function generateDoorDeck() {
