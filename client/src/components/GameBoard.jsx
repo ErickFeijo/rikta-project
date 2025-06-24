@@ -8,10 +8,11 @@ import DeckCard from './DeckCard';
 import HandCardList from './HandCardList';
 import BattleArea from './BattleArea';
 
-export default function GameBoard({ playerName, gameState, onKickDoor, onEquipCard }) {
+export default function GameBoard({ playerName, gameState, onKickDoor, onEquipCard, onHelpPlayer, onHelpMonster }) {
+  const isInitialSetup = gameState.phase === 'initialSetup';
   const currentTurnPlayer = gameState.players.find(p => p.isTurn)?.username;
-  const isPlayerTurn = playerName === currentTurnPlayer;
   const currentPlayer = gameState.players.find(p => p.username === playerName);
+  const isPlayerTurn = isInitialSetup || (playerName === currentTurnPlayer);
   const handCards = currentPlayer?.hand || [];
   const equipment = currentPlayer?.equipment || {};
 
@@ -25,7 +26,14 @@ export default function GameBoard({ playerName, gameState, onKickDoor, onEquipCa
         <main className="main-board">
           <GameInfoHeader currentPlayer={currentTurnPlayer} phase={gameState.phase} />
           <section className="middle-area">
-            <BattleArea cardOpened={gameState.cardOpened} battleState={gameState.battleState} />
+            {/* <BattleArea cardOpened={gameState.cardOpened} battleState={gameState.battleState} /> */}
+            <BattleArea
+              cardOpened={gameState.cardOpened}
+              battleState={gameState.battleState}
+              onHelpPlayer={onHelpPlayer}
+              onHelpMonster={onHelpMonster}
+              isPlayerTurn={isPlayerTurn}
+            />
 
             <DeckCard
               type="door"

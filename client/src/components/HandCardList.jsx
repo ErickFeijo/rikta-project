@@ -1,5 +1,8 @@
 import React from 'react';
+import './HandCardList.css';
 import Card from './Card';
+
+import { socket } from '../socket'; // ajuste o path se necessário
 
 export default function HandCardList({ cards, isPlayerTurn, phase, onEquipCard }) {
   return (
@@ -10,20 +13,29 @@ export default function HandCardList({ cards, isPlayerTurn, phase, onEquipCard }
           <Card
             key={card.id}
             card={card}
-            showButton={card.type === 'equipment' && isPlayerTurn && phase === 'setup'}
+            showButton={card.type === 'equipment' && isPlayerTurn && ['initialSetup', 'setup'].includes(phase)}
             onClick={() => onEquipCard(card.id)}
           />
         ))}
       </div>
       <div className="hand-right">
-        <button
-          className="finish-turn-btn"
-          disabled={!isPlayerTurn}
-          onClick={() => alert('Turno finalizado')}
-          aria-label="Finalizar turno"
-        >
-          Finalizar Turno
-        </button>
+        {phase === 'initialSetup' ? (
+          <button
+            className="finish-turn-btn"
+            disabled={!isPlayerTurn}
+            onClick={() => socket.emit('finish_setup')}
+          >
+            Finalizar Setup
+          </button>
+        ) : (
+          <button
+            className="finish-turn-btn"
+            disabled={!isPlayerTurn}
+            onClick={() => alert('Turno finalizado')}
+          >
+            Finalizar Turno
+          </button>
+        )}
       </div>
     </section>
   );

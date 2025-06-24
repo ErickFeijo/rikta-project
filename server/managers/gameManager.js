@@ -1,3 +1,4 @@
+// === GameManager.js ===
 const Player = require('../models/Player');
 const DeckManager = require('./DeckManager');
 const TableManager = require('./TableManager');
@@ -8,38 +9,72 @@ class GameManager {
   constructor(roomName, playersRaw) {
     this.room = roomName;
     this.state = 'waiting';
-    this.phase = 'setup';
+    this.phase = 'initialSetup';
 
     this.players = playersRaw.map((p, i) => new Player(p.socketId, p.username, i === 0));
     this.deckManager = new DeckManager();
     this.tableManager = new TableManager();
     this.turnManager = new TurnManager(this.players);
-    this.battleManager = new BattleManager();
+    this.battleManager = new BattleManager(this.deckManager);
+    this.setupFinishedPlayers = new Set(); // track quem finalizou o setup
   }
 
- startGame() {
+  startGame() {
     this.state = 'playing';
-    this.phase = 'setup';
+    this.phase = 'initialSetup';
     this.deckManager.dealCards(this.players, 4);
+  }
+
+  finishSetup(socketId) {
+    const player = this.players.find(p => p.id === socketId);
+    if (!player) return { error: 'Jogador não encontrado.' };
+
+    this.setupFinishedPlayers.add(socketId);
+
+    if (this.setupFinishedPlayers.size === this.players.length) {
+      this.phase = 'setup'; 
+      this.turnManager.turnIndex = 0;
+      this.players.forEach(p => (p.isTurn = false));
+      this.turnManager.getCurrentPlayer().isTurn = true;
+    }
+
+    return { success: true };
+  }
+
+  helpPlayer(playerId, helperSocketId) {
+    const helper = this.players.find(p => p.id === helperSocketId);
+    if (!helper) return { error: 'Jogador ajudante não encontrado' };
+
+    return this.battleManager.addHelper(helper);
+  }
+
+  helpMonster(playerId) {
+    // Aqui você pode futuramente implementar o uso de carta ou aumento de força
+    // Por ora, retornamos apenas uma mensagem placeholder
+    return { success: true, message: 'Ajuda ao monstro não implementada ainda.' };
   }
 
   equipCard(playerId, cardId) {
     const player = this.players.find(p => p.id === playerId);
     if (!player) return { error: 'Jogador não encontrado' };
-    if (!player.isTurn || this.phase !== 'setup') return { error: 'Não pode equipar agora' };
+
+    // 💡 Agora permite equipar tanto no initialSetup quanto no setup de turno
+    if (!['initialSetup', 'setup'].includes(this.phase)) {
+      return { error: 'Não pode equipar agora' };
+    }
 
     const card = player.hand.find(c => c.id === cardId);
     if (!card) return { error: 'Carta não está na mão' };
 
-    const result = player.equip(card);
-    return result;
+    return player.equip(card);
   }
 
   kickDoor(playerId) {
     const player = this.players.find(p => p.id === playerId);
     if (!player) return { error: 'Jogador não encontrado' };
-    if (!player.isTurn) return { error: 'Não é seu turno' };
-    if (this.phase !== 'setup') return { error: 'Não pode abrir a porta agora' };
+
+    if (this.phase === 'initialSetup') return { error: 'O jogo ainda não começou' };
+    if (!player.isTurn || this.phase !== 'setup') return { error: 'Não é sua vez' };
 
     const card = this.deckManager.drawDoorCard();
     if (!card) return { error: 'Baralho de portas vazio' };
@@ -48,36 +83,43 @@ class GameManager {
 
     if (card.type === 'monster') {
       this.phase = 'combat';
-      this.battleManager.startBattle(playerId, card);
-    } else if (card.type === 'effect') {
+      this.battleManager.startBattle(player, card);
+    } else {
       this.phase = 'resolveEffect';
-    } 
+    }
 
     return { success: true, card, phase: this.phase };
   }
 
-  advancePhase() {
-    const phaseOrder = ['setup', 'draw', 'battle', 'loot', 'charity'];
-    const currentIndex = phaseOrder.indexOf(this.phase);
-
-    if (currentIndex === phaseOrder.length - 1) {
-      this.phase = 'setup';
-      this.endTurn();
+  resolveCombat() {
+    const result = this.battleManager.resolveCombat();
+    if (result.result === 'victory') {
+      this.phase = 'loot';
     } else {
-      this.phase = phaseOrder[currentIndex + 1];
+      this.phase = 'flee';
     }
+    return result;
+  }
+
+  attemptFlee(playerId) {
+    const player = this.players.find(p => p.id === playerId);
+    if (!player) return { error: 'Jogador não encontrado' };
+    return this.battleManager.attemptFlee(player);
   }
 
   endTurn() {
     this.turnManager.getCurrentPlayer().isTurn = false;
     this.turnManager.advanceTurn();
     this.tableManager.resetTable();
+    this.battleManager.resetBattle();
+    this.phase = 'setup';
   }
 
   getPublicState() {
-    const cardOpened = this.tableManager.tableCards.length > 0
-      ? this.tableManager.tableCards[this.tableManager.tableCards.length - 1]
-      : null;
+      const cardOpened = this.tableManager.tableCards.length > 0
+    ? this.tableManager.tableCards[this.tableManager.tableCards.length - 1]
+    : null;
+
 
     return {
       room: this.room,
@@ -97,12 +139,11 @@ class GameManager {
         name: cardOpened.name,
         description: cardOpened.description,
         type: cardOpened.type,
-        strength: cardOpened.strength ?? null,
+        bonus: cardOpened.bonus ?? null,
       } : null,
-      battleState: this.battleManager.getPublicState(this.players),
-      topDiscardCard: this.tableManager.getTopDiscard(),
+      battleState: this.battleManager.getPublicState(),
       doorDeckCount: this.deckManager.doorDeck.length,
-      treasureDeckCount: this.deckManager.treasureDeck.length,
+      treasureDeckCount: this.deckManager.treasureDeck.length
     };
   }
 

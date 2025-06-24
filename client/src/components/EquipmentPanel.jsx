@@ -9,7 +9,7 @@ export default function EquipmentPanel({ equipment, classeCard, squireCard }) {
   return (
     <div className="equipment-tab">
       <input type="checkbox" id="toggle-equipment" className="toggle-equipment" />
-      <label htmlFor="toggle-equipment" className="equipment-label">⚙️ Equipamentos</label>
+      <label htmlFor="toggle-equipment" className="equipment-label">⚙️ Equipado</label>
       <div className="equipment-panel">
 
         <div className="equipment-bonus">Bônus: +{totalBonus}</div>

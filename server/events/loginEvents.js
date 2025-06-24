@@ -5,7 +5,7 @@ const {
   getRoomPlayers,
   isHost,
   getUsernameBySocketId,
-} = require('../managers/roomManager');
+} = require('../managers/RoomManager');
 
 module.exports = function registerLoginEvents(io, socket) {
  

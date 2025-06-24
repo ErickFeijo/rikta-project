@@ -38,6 +38,15 @@ export default function Game({ room, username }) {
     socket.emit('get_game_state', { room });
   };
 
+  const handleHelpPlayer = (playerId) => {
+    socket.emit('help_player', { playerId });
+  };
+
+  const handleHelpMonster = () => {
+    socket.emit('help_monster');
+  };
+
+
   if (!gameState) return <p>Carregando estado do jogo...</p>;
 
   return (
@@ -84,6 +93,8 @@ export default function Game({ room, username }) {
         gameState={gameState}
         onKickDoor={handleKickDoor}
         onEquipCard={handleEquipCard}
+        onHelpPlayer={handleHelpPlayer}
+        onHelpMonster={handleHelpMonster}
       />
     </>
   );
