@@ -27,3 +27,18 @@
   pointer-events: none;
 }
 
+.deck-wrapper {
+  position: relative;
+  width: 150px;
+  height: 212px;
+}
+
+.deck-opened-card {
+  position: absolute;
+  top: 0px; /* ajusta conforme quiser */
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2;
+  pointer-events: none; /* evita clique na carta aberta */
+}
+

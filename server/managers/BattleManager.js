@@ -34,7 +34,17 @@ class BattleManager {
   }
 
   getPublicState() {
-    if (!this.activeBattle) return null;
+    if (!this.activeBattle) {
+      // Retorna objeto padrão indicando batalha inativa
+      return {
+        active: false,
+        mainPlayer: null,
+        helperPlayer: null,
+        playerPower: 0,
+        monsterPower: 0,
+        monsterCard: null
+      };
+    }
 
     const { mainPlayer, helperPlayer, monsterCard } = this.activeBattle;
 
@@ -44,6 +54,7 @@ class BattleManager {
     const monsterPower = monsterCard?.bonus ?? 0;
 
     return {
+      active: true,
       mainPlayer: {
         id: mainPlayer.id,
         username: mainPlayer.username,

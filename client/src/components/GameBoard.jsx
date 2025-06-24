@@ -29,6 +29,7 @@ export default function GameBoard({ playerName, gameState, onKickDoor, onEquipCa
             {/* <BattleArea cardOpened={gameState.cardOpened} battleState={gameState.battleState} /> */}
             <BattleArea
               cardOpened={gameState.cardOpened}
+              gameState={gameState}
               battleState={gameState.battleState}
               onHelpPlayer={onHelpPlayer}
               onHelpMonster={onHelpMonster}
@@ -36,12 +37,15 @@ export default function GameBoard({ playerName, gameState, onKickDoor, onEquipCa
             />
 
             <DeckCard
+              cardOpened={gameState.cardOpened}
               type="door"
               isClickable={isPlayerTurn && gameState.phase === 'setup'}
               onClick={onKickDoor}
             />
           </section>
+            
         </main>
+      
         <HandCardList
           cards={handCards}
           isPlayerTurn={isPlayerTurn}

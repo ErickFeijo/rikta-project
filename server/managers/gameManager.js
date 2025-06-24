@@ -5,6 +5,16 @@ const TableManager = require('./TableManager');
 const TurnManager = require('./TurnManager');
 const BattleManager = require('./BattleManager');
 
+const phaseHints = {
+  waiting: 'Aguardando todos os jogadores entrarem...',
+  initialSetup: 'Equipe suas cartas e clique em "Finalizar Setup" quando estiver pronto.',
+  setup: 'É sua vez! Você pode equipar cartas ou abrir uma porta.',
+  resolveEffect: 'Resolva o efeito da carta revelada.',
+  combat: 'Você está em combate! Use cartas ou peça ajuda.',
+  loot: 'Você venceu! Pegue seus tesouros antes de encerrar a vez.',
+  flee: 'Você perdeu! Role o dado para tentar fugir.',
+};
+
 class GameManager {
   constructor(roomName, playersRaw) {
     this.room = roomName;
@@ -125,6 +135,7 @@ class GameManager {
       room: this.room,
       state: this.state,
       phase: this.phase,
+      hintMessage: phaseHints[this.phase] ?? '',
       players: this.players.map(p => ({
         id: p.id,
         username: p.username,

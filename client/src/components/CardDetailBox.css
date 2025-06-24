@@ -1,0 +1,24 @@
+.card-detail-box {
+  position: absolute;
+  bottom: 10%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #222;
+  padding: 12px;
+  border-radius: 8px;
+  z-index: 100;
+  width: 80%;
+}
+
+.card-detail-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  color: white;
+}
+
+.card-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}

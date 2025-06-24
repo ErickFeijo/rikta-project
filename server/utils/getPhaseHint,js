@@ -1,0 +1,15 @@
+function getPhaseHint(phase) {
+  const hints = {
+    waiting: 'Aguardando todos os jogadores entrarem...',
+    initialSetup: 'Equipe suas cartas e clique em "Finalizar Setup" quando estiver pronto.',
+    setup: 'É sua vez! Você pode equipar cartas ou abrir uma porta.',
+    resolveEffect: 'Resolva o efeito da carta revelada.',
+    combat: 'Você está em combate! Use cartas ou peça ajuda.',
+    loot: 'Você venceu! Pegue seus tesouros antes de encerrar a vez.',
+    flee: 'Você perdeu! Role o dado para tentar fugir.',
+  };
+
+  return hints[phase] ?? '';
+}
+
+module.exports = getPhaseHint;

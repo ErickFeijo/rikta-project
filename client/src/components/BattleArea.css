@@ -7,212 +7,26 @@
 }
 
 .battle-side {
+  position: relative;
   flex: 1;
   display: flex;
   justify-content: center;
   align-items: center;
   background-color: rgba(255, 255, 255, 0.15);
   border-radius: 8px;
+  padding-top: 60px; /* espaço para botão flutuante */
 }
 
 .battle-center {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  width: 250px;
+  justify-content: flex-start;
+  width: 300px;
+  padding-top: 12px;
   border-left: 2px solid #aaa;
   border-right: 2px solid #aaa;
-}
-
-.placeholder {
-  font-size: 18px;
-  color: #444;
-}
-
-/* Agrupador lateral com efeito glass e destaque */
-.side-holder {
-  background: rgba(0, 0, 0, 0.4);
-  backdrop-filter: blur(3px);
-  padding: 10px;
-  border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 0 8px rgba(0, 0, 0, 0.5);
-  min-width: 140px;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.side-holder:hover {
-  box-shadow: 0 0 12px rgba(255, 255, 255, 0.3);
-  transform: scale(1.02);
-}
-
-.holder-label {
-  font-size: 18px;
-  font-weight: 600;
-  color: #ffdc91;
-  margin-bottom: 6px;
-  text-shadow: 0 0 3px #000;
-}
-
-/* Área que contém as mini cartas sobrepostas */
-.card-stack {
-  position: relative;
-  width: 120px; /* Largura para caber 3 mini cartas sobrepostas */
-  height: 90px;
-  margin: auto;
-  cursor: pointer;
-}
-
-/* Cada mini carta posicionada na stack */
-.card-stack-item {
-  position: absolute;
-  width: 60px;
-  height: 90px;
-  border-radius: 6px;
-  box-shadow: 0 0 6px rgba(0, 0, 0, 0.5);
-  background: transparent;
-  transition: transform 0.2s ease;
-  user-select: none;
-}
-
-/* .card-stack-item:hover {
-  transform: translateY(-10px) scale(1.05);
-  z-index: 100;
-} */
-
-.card-stack:hover .card-stack-item {
-  transform: translateY(-10px) scale(1.05);
-  transition: transform 0.2s ease;
-}
-
-
-/* Compactação para o Card - para usar na miniatura */
-.card-container.card-compact {
-  width: 60px !important;
-  height: 90px !important;
-  font-size: 0.75rem;
-  cursor: default;
-  padding: 4px;
-  box-sizing: border-box;
-  user-select: none;
-
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
-
-/* Esconde detalhes para deixar compacto */
-.card-container.card-compact .card-details,
-.card-container.card-compact button {
-  display: none;
-}
-
-/* Título estilizado para miniatura */
-.card-container.card-compact .card-title {
-  font-weight: 700;
-  color: #ffdc91;
-  text-shadow: 0 0 2px #000;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.total-label {
-  font-size: 18px;
-  font-weight: bold;
-  color: white; /* "Bônus:" em branco */
-  margin-top: 6px;
-  text-shadow: 1px 1px 2px black;
-  text-align: right;
-}
-
-.bonus-value {
-  color: #ff6666; /* vermelho claro e chamativo */
-  text-shadow: 0 0 4px #000;
-  font-weight: 700;
-}
-
-
-
-/* Popup que aparece ao clicar no agrupador */
-.card-detail-box {
-  position: absolute;
-  bottom: 10%;
-  left: 50%;
-  transform: translateX(-50%);
-  background: #222;
-  padding: 12px;
-  border-radius: 8px;
-  z-index: 100;
-  width: 80%;
-}
-
-.card-detail-header {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 8px;
-  color: white;
-}
-
-.card-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-.action-banner {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 10px;
-  margin-top: -10px;
-}
-
-.action-button.big {
-  font-size: 15px;
-  font-weight: bold;
-  background-color: #ffd86b;
-  color: #222;
-  border: none;
-  border-radius: 10px;
-  padding: 6px 16px;
-  cursor: pointer;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.5);
-  transition: background-color 0.2s ease;
-}
-
-.action-button.big:hover {
-  background-color: #ffcc33;
-}
-
-.help-button {
-  align-self: flex-start;
-  margin-bottom: 8px;
-  padding: 14px 24px;
-  background: linear-gradient(145deg, #ffe580, #ffcc40);
-  color: #222;
-  font-size: 18px;
-  font-weight: bold;
-  border: none;
-  border-radius: 12px;
-  cursor: pointer;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.4);
-  text-shadow: 1px 1px 2px #fff;
-  transition: transform 0.2s ease, background 0.3s ease;
-}
-
-.help-button:hover {
-  transform: scale(1.05);
-  background: linear-gradient(145deg, #fff199, #ffda5a);
-}
-
-.battle-side {
-  position: relative; /* necessário para o posicionamento absoluto do botão interno */
-  flex: 1;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: rgba(255, 255, 255, 0.15);
-  border-radius: 8px;
-  padding-top: 60px; /* espaço para o botão flutuante não se sobrepor ao conteúdo */
+  gap: 12px;
 }
 
 .side-button-wrapper {
@@ -224,7 +38,6 @@
 }
 
 .help-button {
-  display: inline-block;
   padding: 14px 28px;
   background: linear-gradient(145deg, #ffe580, #ffcc40);
   color: #222;
@@ -242,126 +55,4 @@
 .help-button:hover {
   transform: scale(1.08);
   background: linear-gradient(145deg, #fff199, #ffda5a);
-}
-
-.battle-center {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
-  width: 300px;
-  padding-top: 12px;
-  border-left: 2px solid #aaa;
-  border-right: 2px solid #aaa;
-  gap: 12px;
-}
-
-.battle-comparison {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 24px;
-  font-family: 'Cinzel', serif;
-  text-shadow: 1px 1px 2px black;
-  animation: fadeIn 0.4s ease;
-}
-
-.score {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  min-width: 90px;
-}
-
-.score-value {
-  font-size: 36px;
-  font-weight: 900;
-  color: #ffcc40;
-  text-shadow: 0 0 8px #fff199, 0 0 4px black;
-}
-
-.score-label {
-  font-size: 14px;
-  font-weight: 600;
-  color: #eee;
-  text-shadow: 0 0 2px #000;
-  margin-top: 4px;
-  text-align: center;
-}
-
-.versus-icon {
-  font-size: 32px;
-  color: #f77070;
-  text-shadow: 0 0 6px black;
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.battle-actions {
-  display: flex;
-  justify-content: center;
-  gap: 16px;
-  margin-top: 20px;
-}
-
-.battle-button {
-  padding: 10px 16px;
-  font-size: 16px;
-  font-weight: bold;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  background-color: #2ecc71;
-  color: white;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-  transition: all 0.2s ease-in-out;
-}
-
-.battle-button:disabled {
-  background-color: #bdc3c7;
-  cursor: not-allowed;
-}
-
-.flee-button {
-  background-color: #e67e22;
-}
-
-.score.winner .score-value {
-  font-size: 42px;
-  color: #ffcc40;
-  text-shadow: 0 0 10px #fff199, 0 0 6px black;
-}
-
-.score.loser .score-value {
-  font-size: 35px;
-  color: #aa4444;
-  text-shadow: 0 0 4px #858585;
-  opacity: 0.8;
-}
-
-.battle-button-wrapper {
-  position: relative;
-  display: inline-block;
-}
-
-.combat-timer-overlay {
-  position: absolute;
-  top: -10px;
-  right: -6px;
-  background: rgba(0, 0, 0, 0.5);
-  color: #fff;
-  font-size: 14px;
-  padding: 2px 6px;
-  border-radius: 6px;
-  opacity: 0.7;
-  pointer-events: none;
 }

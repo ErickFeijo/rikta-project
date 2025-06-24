@@ -6,37 +6,26 @@ import { socket } from '../socket'; // ajuste o path se necessário
 
 export default function HandCardList({ cards, isPlayerTurn, phase, onEquipCard }) {
   return (
-    <section className="hand-cards">
-      <div className="hand-left">
+    <div className="hand-cards">
+    {/* // <section className="hand-cards"> */}
         {cards.length === 0 && <p>Você ainda não tem cartas.</p>}
-        {cards.map(card => (
-          <Card
-            key={card.id}
-            card={card}
-            showButton={card.type === 'equipment' && isPlayerTurn && ['initialSetup', 'setup'].includes(phase)}
-            onClick={() => onEquipCard(card.id)}
-          />
-        ))}
-      </div>
-      <div className="hand-right">
-        {phase === 'initialSetup' ? (
-          <button
-            className="finish-turn-btn"
-            disabled={!isPlayerTurn}
-            onClick={() => socket.emit('finish_setup')}
-          >
-            Finalizar Setup
-          </button>
-        ) : (
-          <button
-            className="finish-turn-btn"
-            disabled={!isPlayerTurn}
-            onClick={() => alert('Turno finalizado')}
-          >
-            Finalizar Turno
-          </button>
-        )}
-      </div>
-    </section>
+        {cards.map((card, index) => {
+          const total = cards.length;
+          const angle = (index - (total - 1) / 2) * 2; // curva suave
+
+          return (
+            <div
+              key={card.id}
+              className="card"
+              style={{ transform: `rotate(${angle}deg)` }}
+              onClick={() => onEquipCard(card.id)}
+            >
+              <Card card={card} showButton={false} />
+            </div>
+          );
+        })}
+
+    {/* // </section> */}
+    </div>
   );
 }

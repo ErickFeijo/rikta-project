@@ -1,0 +1,45 @@
+.side-holder {
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(3px);
+  padding: 10px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.5);
+  min-width: 140px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.side-holder:hover {
+  box-shadow: 0 0 12px rgba(255, 255, 255, 0.3);
+  transform: scale(1.02);
+}
+
+.holder-label {
+  font-size: 18px;
+  font-weight: 600;
+  color: #ffdc91;
+  margin-bottom: 6px;
+  text-shadow: 0 0 3px #000;
+}
+
+.total-label {
+  font-size: 18px;
+  font-weight: bold;
+  color: white;
+  margin-top: 6px;
+  text-shadow: 1px 1px 2px black;
+  text-align: right;
+}
+
+.bonus-value {
+  color: #ff6666;
+  text-shadow: 0 0 4px #000;
+  font-weight: 700;
+}
+
+.player-side-content {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: center; /* opcional: centraliza os side-holders horizontalmente */
+}

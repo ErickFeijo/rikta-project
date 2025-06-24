@@ -1,26 +1,29 @@
 .hand-cards {
-  background-color: rgba(255,255,255,0.95);
-  color: #111;
-  padding: 12px 24px;
-  border-top: 2px solid #ccc;
+  position: relative;
   display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  box-sizing: border-box;
-  justify-content: space-between;
-  align-items: flex-start;
-}
-
-.hand-left {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  flex: 1;
-}
-
-.hand-right {
-  display: flex;
-  flex-direction: column;
+  justify-content: center;
   align-items: flex-end;
-  justify-content: flex-start;
+  padding: 24px;
+  gap: 0;
+  height: 275px;
+  perspective: 1000px;
+  overflow-x: auto;
+  padding-top: 0;
+
+  background-color: transparent;
+  border-top: none;
+}
+
+.hand-cards .card {
+  margin: 0 -10px;
+  transform-origin: bottom center;
+  transition: transform 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94), z-index 0.1s ease;
+  z-index: 1;
+  cursor: pointer;
+  will-change: transform;
+}
+
+.hand-cards .card:hover {
+  transform: translateY(-40px) scale(1.7) translateZ(30px) rotate(0deg);
+  z-index: 10;
 }

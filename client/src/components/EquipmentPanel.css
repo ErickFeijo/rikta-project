@@ -54,8 +54,6 @@
 
 /* Slot padrão */
 .equipment-slot {
-  width: 100px;
-  height: 130px;
   border: 2px dashed #666;
   border-radius: 8px;
   background-color: #111;
@@ -103,4 +101,22 @@
   background-color: rgba(0,0,0,0.4);
   padding: 4px 8px;
   border-radius: 6px;
+}
+
+.equipment-panel {
+  opacity: 0;
+  transform: translateY(12px);
+  transition: all 0.3s ease;
+}
+
+.toggle-equipment:checked + .equipment-label + .equipment-panel {
+  display: block;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.equipment-slot.filled {
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.2);
 }
