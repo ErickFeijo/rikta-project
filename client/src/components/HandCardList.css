@@ -7,7 +7,7 @@
   gap: 0;
   height: 275px;
   perspective: 1000px;
-  overflow-x: auto;
+  /* overflow-x: auto; */
   padding-top: 0;
 
   background-color: transparent;

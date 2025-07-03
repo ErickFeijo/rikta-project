@@ -1,10 +1,15 @@
+const MonsterCard = require('../models/MonsterCard');
+
 class BattleManager {
   constructor(deckManager) {
     this.activeBattle = null;
     this.deckManager = deckManager;
   }
 
-  startBattle(mainPlayer, monsterCard) {
+  startBattle(mainPlayer, monsterCardPlain) {
+    
+    const monsterCard = new MonsterCard(monsterCardPlain);
+
     this.activeBattle = {
       mainPlayer,
       helperPlayer: null,
@@ -84,6 +89,7 @@ class BattleManager {
     if (!this.activeBattle) return { error: 'Nenhuma batalha em andamento' };
 
     const { mainPlayer, helperPlayer, monsterCard } = this.activeBattle;
+
     const mainPower = this.getEquippedBonus(mainPlayer);
     const helperPower = helperPlayer ? this.getEquippedBonus(helperPlayer) : 0;
     const playerPower = mainPower + helperPower;
@@ -92,7 +98,7 @@ class BattleManager {
     const victory = playerPower >= monsterPower;
 
     if (victory) {
-      const rewards = this.applyRewards(mainPlayer, helperPlayer, monsterCard);
+      const rewards = monsterCard.applyRewards(mainPlayer, helperPlayer, this.deckManager);
       return {
         result: 'victory',
         winnerIds: [mainPlayer.id, helperPlayer?.id].filter(Boolean),
@@ -100,37 +106,37 @@ class BattleManager {
         rewards
       };
     } else {
+      const penalties = monsterCard.applyPenalties(mainPlayer);
       return {
         result: 'defeat',
-        message: 'Os jogadores foram derrotados! Prepare-se para tentar fugir!'
+        message: 'Os jogadores foram derrotados! Prepare-se para tentar fugir!',
+        penalties
       };
     }
   }
 
-  applyRewards(mainPlayer, helperPlayer, monsterCard) {
-    const totalLevels = monsterCard.levels || 1;
-    const drawnTreasures = this.deckManager.drawTreasureCard();
-
-    mainPlayer.level += totalLevels;
-    mainPlayer.hand.push(...drawnTreasures);
-
-    return {
-      levelsGained: totalLevels,
-      treasuresDrawn: drawnTreasures.map(t => ({ id: t.id, name: t.name }))
-    };
-  }
-
   attemptFlee(player) {
+    if (!this.activeBattle) return { error: 'Nenhuma batalha em andamento' };
+
     const roll = Math.floor(Math.random() * 6) + 1;
     const escaped = roll >= 5;
 
+    let penalties = null;
+    if (!escaped) {
+      const { monsterCard, helperPlayer } = this.activeBattle;
+      penalties = monsterCard.applyPenalties(player, helperPlayer, this.deckManager);
+    }
+
     return {
-      playerId: player.id,
       roll,
       escaped,
-      message: escaped ? `${player.username} fugiu com sucesso!` : `${player.username} falhou na fuga!`
+      message: escaped
+        ? `${player.username} fugiu com sucesso!`
+        : `${player.username} falhou na fuga!`,
+      penalties,
     };
   }
+
 }
 
 module.exports = BattleManager;

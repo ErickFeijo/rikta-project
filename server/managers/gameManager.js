@@ -6,14 +6,36 @@ const TurnManager = require('./TurnManager');
 const BattleManager = require('./BattleManager');
 
 const phaseHints = {
-  waiting: 'Aguardando todos os jogadores entrarem...',
-  initialSetup: 'Equipe suas cartas e clique em "Finalizar Setup" quando estiver pronto.',
-  setup: 'É sua vez! Você pode equipar cartas ou abrir uma porta.',
-  resolveEffect: 'Resolva o efeito da carta revelada.',
-  combat: 'Você está em combate! Use cartas ou peça ajuda.',
-  loot: 'Você venceu! Pegue seus tesouros antes de encerrar a vez.',
-  flee: 'Você perdeu! Role o dado para tentar fugir.',
+  waiting: {
+    active: 'Aguardando todos os jogadores entrarem...',
+    spectator: 'Aguardando todos os jogadores entrarem...',
+  },
+  initialSetup: {
+    active: 'Equipe suas cartas e clique em "Finalizar Setup" quando estiver pronto.',
+    spectator: 'Aguardando os outros jogadores finalizarem o setup...',
+  },
+  setup: {
+    active: 'É sua vez! Você pode equipar cartas ou abrir uma porta.',
+    spectator: 'Aguardando o jogador da vez abrir uma porta...',
+  },
+  resolveEffect: {
+    active: 'Resolva o efeito da carta revelada.',
+    spectator: 'Aguardando o jogador resolver o efeito da carta.',
+  },
+  combat: {
+    active: 'Você está em combate! Use cartas ou peça ajuda.',
+    spectator: 'O jogador está em combate! Você pode oferecer ajuda.',
+  },
+  loot: {
+    active: 'Você venceu! Pegue seus tesouros antes de encerrar a vez.',
+    spectator: 'O jogador venceu! Aguardando ele pegar os tesouros.',
+  },
+  flee: {
+    active: 'Você perdeu! Role o dado para tentar fugir.',
+    spectator: 'O jogador está tentando fugir do combate...',
+  }
 };
+
 
 class GameManager {
   constructor(roomName, playersRaw) {
@@ -33,7 +55,11 @@ class GameManager {
     this.state = 'playing';
     this.phase = 'initialSetup';
     this.deckManager.dealCards(this.players, 4);
+
+    // Ninguém está em turno ainda na fase inicial
+    this.players.forEach(p => p.isTurn = false);
   }
+
 
   finishSetup(socketId) {
     const player = this.players.find(p => p.id === socketId);
@@ -42,14 +68,18 @@ class GameManager {
     this.setupFinishedPlayers.add(socketId);
 
     if (this.setupFinishedPlayers.size === this.players.length) {
-      this.phase = 'setup'; 
+      this.phase = 'setup';
+
+      // Começa o turno normalmente
       this.turnManager.turnIndex = 0;
       this.players.forEach(p => (p.isTurn = false));
-      this.turnManager.getCurrentPlayer().isTurn = true;
+      const current = this.turnManager.getCurrentPlayer();
+      current.isTurn = true;
     }
 
     return { success: true };
   }
+
 
   helpPlayer(playerId, helperSocketId) {
     const helper = this.players.find(p => p.id === helperSocketId);
@@ -114,13 +144,39 @@ class GameManager {
   attemptFlee(playerId) {
     const player = this.players.find(p => p.id === playerId);
     if (!player) return { error: 'Jogador não encontrado' };
-    return this.battleManager.attemptFlee(player);
+
+    const fleeResult = this.battleManager.attemptFlee(player);
+    this.phase = 'effect';
+    this.endTurn();
+
+    const currentTurnPlayer = this.turnManager.getCurrentPlayer();
+
+    return {
+      type: 'flee_attempted',
+      data: {
+        playerId: player.id,
+        username: player.username,
+        roll: fleeResult.roll,
+        escaped: fleeResult.escaped,
+        message: fleeResult.message,
+        penalties: fleeResult.penalties,
+        nextPlayer: {
+          id: currentTurnPlayer.id,
+          username: currentTurnPlayer.username,
+        }
+      }
+    };
   }
 
   endTurn() {
-    this.turnManager.getCurrentPlayer().isTurn = false;
+    const current = this.turnManager.getCurrentPlayer();
+    current.isTurn = false;
+
     this.turnManager.advanceTurn();
-    this.tableManager.resetTable();
+    const next = this.turnManager.getCurrentPlayer();
+    next.isTurn = true;
+
+    this.tableManager.clearTableToDiscard();
     this.battleManager.resetBattle();
     this.phase = 'setup';
   }
@@ -135,23 +191,15 @@ class GameManager {
       room: this.room,
       state: this.state,
       phase: this.phase,
-      hintMessage: phaseHints[this.phase] ?? '',
       players: this.players.map(p => ({
         id: p.id,
         username: p.username,
         level: p.level,
         isTurn: p.isTurn,
         isHost: p.isHost,
-        hand: p.hand,
         equipment: p.equipment
       })),
-      cardOpened: cardOpened ? {
-        id: cardOpened.id,
-        name: cardOpened.name,
-        description: cardOpened.description,
-        type: cardOpened.type,
-        bonus: cardOpened.bonus ?? null,
-      } : null,
+      cardOpened,
       battleState: this.battleManager.getPublicState(),
       doorDeckCount: this.deckManager.doorDeck.length,
       treasureDeckCount: this.deckManager.treasureDeck.length
@@ -160,12 +208,27 @@ class GameManager {
 
   getPrivateStateFor(playerId) {
     const publicState = this.getPublicState();
-    const player = this.players.find(p => p.id === playerId);
+    const player = this.players.find(p => p.username === playerId);
+
+    let hintMessage = '';
+    const phaseHint = phaseHints[this.phase] || {};
+
+    if (this.phase === 'initialSetup') {
+      const hasFinished = this.setupFinishedPlayers.has(player?.id);
+      hintMessage = hasFinished ? phaseHint.spectator : phaseHint.active;
+    } else {
+      const isCurrentPlayer = player?.isTurn ?? false;
+      hintMessage = isCurrentPlayer ? phaseHint.active : phaseHint.spectator || '';
+    }
+
     return {
       ...publicState,
-      hand: player?.hand || []
+      hand: player?.hand || [],
+      hintMessage,
+      hasFinishedSetup: this.setupFinishedPlayers.has(player?.id) 
     };
   }
+
 }
 
 module.exports = GameManager;

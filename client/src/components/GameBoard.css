@@ -40,6 +40,7 @@ body, html {
 }
 
 .sidebar li {
+  margin-top: 10px;
   margin-bottom: 10px;
   padding: 6px;
   background-color: #5b5a58;

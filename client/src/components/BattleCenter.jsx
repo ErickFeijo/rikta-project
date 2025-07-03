@@ -1,6 +1,5 @@
 // BattleArea/BattleCenter.jsx
 import React from 'react';
-import Card from './Card';
 import './BattleCenter.css'
 import { socket } from '../socket';
 
@@ -9,7 +8,6 @@ export default function BattleCenter({
   mainPlayer,
   playerPower,
   monsterPower,
-  monsterCard,
   isPlayerTurn,
   onResolveCombat,
   onAttemptFlee,
@@ -17,8 +15,6 @@ export default function BattleCenter({
 }) {
   const playerWinning = playerPower >= monsterPower;
   
-  // if (!mainPlayer) return null;
-
   return (
     <div className="battle-center">
       {gameState.phase === "combat" && (
@@ -36,14 +32,14 @@ export default function BattleCenter({
         </div>
       </div>
       )}
+
       <div className="game-hint">
         {gameState.hintMessage}
       </div>
-      {/* {monsterCard && <Card key={monsterCard.id} card={monsterCard} />} */}
       
       <div className="battle-actions">
 
-      {gameState.phase === "combat" && (
+      {gameState.phase === "combat" && isPlayerTurn && (
           <>
           <button
             className="battle-button"
@@ -63,15 +59,15 @@ export default function BattleCenter({
        )}
 
         {gameState.phase === 'initialSetup' && (
-
           <button
             className="battle-button"
-            disabled={!isPlayerTurn}
+            disabled={gameState.hasFinishedSetup}
             onClick={() => socket.emit('finish_setup')}
           >
             Finalizar Setup
           </button>
         )}
+
         </div>
     </div>
   );

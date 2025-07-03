@@ -2,7 +2,7 @@ class TurnManager {
   constructor(players) {
     this.players = players;
     this.turnIndex = 0;
-    this.players[this.turnIndex].isTurn = true;
+    // Não define isTurn aqui — isso será feito no GameManager na hora certa
   }
 
   getCurrentPlayer() {

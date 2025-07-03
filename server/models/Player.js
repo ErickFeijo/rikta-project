@@ -43,20 +43,32 @@ class Player {
 
       this.equipment[targetSlot] = card;
     }
+
     // Equipamentos de mão
     else if (card.hands) {
+      // Antes de tudo, verifica se já tem uma arma de 2 mãos equipada
+      const hasTwoHandedEquipped =
+        this.equipment.leftHand &&
+        this.equipment.rightHand &&
+        this.equipment.leftHand === this.equipment.rightHand;
+
+      if (hasTwoHandedEquipped) {
+        // Retorna a arma de 2 mãos para a mão
+        this.hand.push(this.equipment.leftHand);
+        this.equipment.leftHand = null;
+        this.equipment.rightHand = null;
+      }
 
       if (card.hands === 2) {
-        // Desocupa as duas mãos
+        // Remove o que tiver nas mãos
         this._returnHandItemToHand('leftHand');
         this._returnHandItemToHand('rightHand');
 
+        // Equipa só em uma mão, deixando transparente pro front
         this.equipment.leftHand = card;
-        this.equipment.rightHand = card;
-
-      }
-      else if (card.hands === 1) {
-
+        this.equipment.rightHand = null;
+      } else if (card.hands === 1) {
+        // Tenta colocar em uma das mãos
         if (!this.equipment.leftHand) {
           this.equipment.leftHand = card;
         } else if (!this.equipment.rightHand) {
@@ -66,17 +78,17 @@ class Player {
           this._returnHandItemToHand('leftHand');
           this.equipment.leftHand = card;
         }
-
       }
+    }
 
-    } else {
+    else {
       return { error: 'Carta não equipável' };
     }
 
-    // Remove da mão
     this._removeCardFromHand(card.id);
     return { success: true };
   }
+
 
   unequip(slot) {
     if (!this.equipment[slot]) return;

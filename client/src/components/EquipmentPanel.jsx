@@ -1,7 +1,7 @@
 import React from 'react';
 import EquipmentSlot from './EquipmentSlot';
 
-export default function EquipmentPanel({ equipment, classeCard, squireCard }) {
+export default function EquipmentPanel({ equipment }) {
   const totalBonus = Object.values(equipment)
     .filter(Boolean)
     .reduce((sum, card) => sum + (card.bonus || 0), 0);
@@ -16,10 +16,10 @@ export default function EquipmentPanel({ equipment, classeCard, squireCard }) {
 
         {/* Slots fixos no canto superior e inferior direito */}
         <div className="equipment-slot-top-right">
-          <EquipmentSlot icon="🏅" label="Classe" card={classeCard} />
+          <EquipmentSlot icon="🏅" label="Classe" card={equipment.class} />
         </div>
         <div className="equipment-slot-bottom-right">
-          <EquipmentSlot icon="🛡️" label="Escudeiro" card={squireCard} />
+          <EquipmentSlot icon="🛡️" label="Escudeiro" card={equipment.helper} />
         </div>
 
         <div className="equipment-layout">

@@ -1,0 +1,96 @@
+.turn-transition {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(3px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+}
+
+.turn-transition.show {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.turn-transition.hide {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.turn-transition .card {
+  background: linear-gradient(135deg, #2c2c2c, #1e1e1e);
+  padding: 48px 64px;
+  border-radius: 20px;
+  text-align: center;
+  color: #fff;
+  box-shadow: 0 0 40px rgba(0, 0, 0, 0.8);
+  animation: popIn 0.4s ease-out;
+}
+
+.turn-transition .icon {
+  font-size: 2.5rem;
+  margin-bottom: 12px;
+}
+
+.turn-transition h1 {
+  margin: 0;
+  font-size: 2.2rem;
+  color: #ffcc00;
+}
+
+.turn-transition h2 {
+  margin-top: 16px;
+  font-size: 1.4rem;
+}
+
+.turn-transition .highlight {
+  color: #ffcc00;
+  font-weight: 600;
+}
+
+@keyframes popIn {
+  from { transform: scale(0.8); opacity: 0; }
+  to   { transform: scale(1); opacity: 1; }
+}
+
+.turn-transition .card {
+  background: #1e1e1e;
+  padding: 48px 64px;
+  border-radius: 20px;
+  text-align: center;
+  color: #fff;
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.6);
+}
+
+.turn-transition h1 {
+  margin: 0;
+  font-size: 2.4rem;
+  color: #ffcc00;
+}
+
+.turn-transition h2 {
+  margin-top: 16px;
+  font-size: 1.5rem;
+  font-weight: 500;
+}
+
+.turn-transition .card {
+  min-width: 300px;
+  min-height: 300px;
+  max-width: 600px;
+  width: fit-content;
+}
+
+.turn-transition .card {
+  background: #1e1e1e;
+  padding: 40px 60px;
+  border-radius: 16px;
+  box-shadow: 0 0 20px #000;
+  max-width: 90vw;
+  text-align: center;
+}

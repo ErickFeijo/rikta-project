@@ -1,0 +1,130 @@
+.flee-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  font-family: 'Segoe UI', sans-serif;
+  text-align: center;
+  padding: 20px;
+}
+
+.flee-instruction {
+  font-size: 18px;
+  color: #fff9d6;
+  background: rgba(0, 0, 0, 0.3);
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin-bottom: 24px;
+  max-width: 320px;
+  line-height: 1.5;
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.1);
+}
+
+.dice {
+  width: 100px;
+  height: 100px;
+  background: #ffffff;
+  color: #000;
+  font-size: 48px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 24px;
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.3);
+  transition: transform 0.3s ease;
+}
+
+.dice.rolling {
+  animation: roll 1.5s infinite;
+}
+
+@keyframes roll {
+  0% { transform: rotate(0deg); }
+  25% { transform: rotate(15deg); }
+  50% { transform: rotate(-15deg); }
+  75% { transform: rotate(10deg); }
+  100% { transform: rotate(0deg); }
+}
+
+.result-text {
+  font-size: 22px;
+  margin-bottom: 20px;
+  opacity: 0;
+  animation: fadeIn 0.5s ease forwards;
+}
+
+.result-text.success {
+  color: #6cff9a;
+  text-shadow: 0 0 6px #0f0;
+}
+
+.result-text.failure {
+  color: #ff7a7a;
+  text-shadow: 0 0 6px #f00;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+.ok-button {
+  padding: 10px 28px;
+  font-size: 16px;
+  background-color: #ffcc00;
+  color: #000;
+  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  transition: background 0.2s ease;
+}
+
+.ok-button:hover {
+  background-color: #ffd633;
+}
+
+.effect-phase {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.effect-title {
+  font-size: 20px;
+  color: #fff9d6;
+  background: rgba(0, 0, 0, 0.3);
+  padding: 10px 14px;
+  border-radius: 8px;
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.1);
+}
+
+.effect-text {
+  font-size: 18px;
+  max-width: 320px;
+  line-height: 1.6;
+  text-align: center;
+  padding: 14px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.25);
+  animation: fadeIn 0.5s ease forwards;
+}
+
+.effect-good {
+  color: #aaffaa;
+  background-color: #173c17;
+  text-shadow: 0 0 6px #0f0;
+}
+
+.effect-bad {
+  color: #ffaaaa;
+  background-color: #3c1717;
+  text-shadow: 0 0 6px #f00;
+}

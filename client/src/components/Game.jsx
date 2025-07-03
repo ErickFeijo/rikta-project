@@ -1,10 +1,14 @@
 // components/Game.js
 import React, { useEffect, useState } from 'react';
 import GameBoard from './GameBoard';
+import FleeAttemptResult from './FleeAttemptResult';
+import TurnTransition from './TurnTransition';
 import { socket } from '../socket';
 
 export default function Game({ room, username }) {
   const [gameState, setGameState] = useState(null);
+  const [fleeResult, setFleeResult] = useState(null);
+  const [nextPlayerName, setNextPlayerName] = useState(null);
 
   useEffect(() => {
     socket.emit('joinRoom', { room, username });
@@ -13,8 +17,21 @@ export default function Game({ room, username }) {
       setGameState(state);
     });
 
+    socket.on('state_updated', () => {
+      socket.emit('get_game_state', { room });
+    });
+
     socket.on('errorMessage', (msg) => { 
       alert(msg);
+    });
+    
+    // socket.on('end_turn', ({ result }) => {
+    //   setNextPlayerName(result.nextPlayerTurn); 
+    // });
+
+    socket.on('flee_attempted', ({ result }) => {
+      setFleeResult(result);
+      // setNextPlayerName(result.nextPlayer.username);
     });
 
     socket.emit('get_game_state', { room });
@@ -28,10 +45,6 @@ export default function Game({ room, username }) {
 
   const handleKickDoor = () => {
     socket.emit('kickDoor');
-  };
-
-  const handleEquipCard = (cardId) => {
-    socket.emit('equip_card', { cardId });
   };
 
   const handleRefreshGameState = () => {
@@ -92,10 +105,33 @@ export default function Game({ room, username }) {
         playerName={username}
         gameState={gameState}
         onKickDoor={handleKickDoor}
-        onEquipCard={handleEquipCard}
         onHelpPlayer={handleHelpPlayer}
         onHelpMonster={handleHelpMonster}
       />
+
+     {fleeResult && (
+        <FleeAttemptResult
+          playerName={username}
+          gameState={gameState}
+          result={fleeResult.data}
+          onClose={() => {
+            setFleeResult(null);
+            // Agora sim, ao sumir, mostra a transição de turno
+            if (fleeResult.data?.nextPlayer?.username) {
+              setNextPlayerName(fleeResult.data.nextPlayer.username);
+            }
+          }}
+        />
+      )}
+
+
+      {nextPlayerName && (
+        <TurnTransition
+          playerName={nextPlayerName}
+          onFinish={() => setNextPlayerName(null)}
+        />
+       )}
+
     </>
   );
 }

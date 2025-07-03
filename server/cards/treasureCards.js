@@ -111,7 +111,7 @@ function generateTreasureCards() {
     // HELPER
     {
       name: 'Gato de Telhado',
-      type: CardTypes.HELPER,
+      type: CardTypes.EQUIPMENT,
       description: 'Bônus +1. Espanta zumbis com miados.',
       bonus: 1,
       slot: 'helper',
@@ -119,7 +119,7 @@ function generateTreasureCards() {
     },
     {
       name: 'Velho do Armazém',
-      type: CardTypes.HELPER,
+      type: CardTypes.EQUIPMENT,
       description: 'Bônus +2. Sabe tudo. Não corre, mas dá dica.',
       bonus: 2,
       slot: 'helper',

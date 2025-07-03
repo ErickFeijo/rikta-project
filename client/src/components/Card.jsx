@@ -1,7 +1,7 @@
 import React from 'react';
 import './Card.css';
 
-export default function Card({ card, showButton = false, onClick, compact = false }) {
+export default function Card({ card, compact = false }) {
   return (
     <div className={`card-container ${compact ? 'card-compact' : ''}`} title={card.description}>
       <div className="card-background" />
@@ -15,17 +15,27 @@ export default function Card({ card, showButton = false, onClick, compact = fals
           </div>
         ) : (
           <>
-            <div>
+            <div className="card-header">
               <div className="card-title">{card.name}</div>
-              <div className="card-details">{card.description}</div>
+              {card.bonus && (
+                <div className="card-bonus">+{card.bonus}</div>
+              )}
             </div>
-            {card.bonus && (
-              <div className="card-bonus">+{card.bonus}</div>
-            )}
-            {showButton && (
-              <button onClick={onClick}>Equipar</button>
+            <div className="card-details">{card.description}</div>
+
+            
+            {card.rewardsText && (
+            <div className="card-effects">
+              <div className="reward">
+                🎁 {card.rewardsText || 'Padrão: +nível e tesouros'}
+              </div>
+              <div className="penalty">
+                💀 {card.penaltiesText || 'Padrão: perde 1 nível'}
+              </div>
+            </div>
             )}
           </>
+
         )}
       </div>
     </div>

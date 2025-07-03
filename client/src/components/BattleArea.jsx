@@ -52,7 +52,6 @@ export default function BattleArea({
         mainPlayer={battleState.mainPlayer}
         playerPower={battleState.playerPower}
         monsterPower={battleState.monsterPower}
-        monsterCard={battleState.monsterCard}
         isPlayerTurn={isPlayerTurn}
         resolveTimer={resolveTimer}
         onResolveCombat={() => socket.emit('resolve_combat')}
