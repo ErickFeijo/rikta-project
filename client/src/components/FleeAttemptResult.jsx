@@ -5,19 +5,19 @@ export default function FleeAttemptResult({ result, onClose, playerName }) {
   const [phase, setPhase] = useState('rolling');
 
   useEffect(() => {
-    const timer1 = setTimeout(() => setPhase('result'), 2000);
+    const timer1 = setTimeout(() => setPhase('result'), 5000);
     const timer2 = setTimeout(() => {
       if (result.escaped) {
         onClose();
       } else {
         setPhase('effect');
       }
-    }, 4000);
+    }, 8000);
     const timer3 = setTimeout(() => {
       if (!result.escaped) {
         onClose();
       }
-    }, 8000);
+    }, 11000);
 
     return () => {
       clearTimeout(timer1);

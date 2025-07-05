@@ -68,6 +68,28 @@ export default function BattleCenter({
           </button>
         )}
 
+        {!isPlayerTurn && (
+          <>
+            {mainPlayer && (
+              <>
+              <button
+                className="battle-button"
+                onClick={() => socket.emit('help_player', { playerId: mainPlayer.id })}
+              >
+                🙌 Ajudar {mainPlayer.username}
+              </button>
+              <button
+                className="battle-button flee-button"
+                onClick={() => socket.emit('help_monster')}
+              >
+                Ajudar Monstro 😈
+              </button>
+              </>
+            )}
+          </>
+
+        )}
+
         </div>
     </div>
   );

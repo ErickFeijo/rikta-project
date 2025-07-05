@@ -7,6 +7,8 @@ export default function CardActionMenu({ card, phase, isPlayerTurn, onClose }) {
 
   const isInitialSetup = phase === 'initialSetup';
   const isSetup = phase === 'setup';
+  const isCombat = phase === 'combat';
+  const isNotCurrentTurn = !isPlayerTurn;
 
   // Equipar carta (initialSetup sempre, setup só se for o turno)
   if (card.type === 'equipment') {
@@ -32,6 +34,17 @@ export default function CardActionMenu({ card, phase, isPlayerTurn, onClose }) {
     });
   }
 
+  if (card.type === 'monster' && isCombat && isNotCurrentTurn) {
+    options.push({
+      label: 'Ajudar Monstro',
+      action: () => {
+        socket.emit('add_monster_to_combat', {
+          cardId: card.id
+        });
+        onClose();
+      }
+    });
+  }
   // Se não houver ações possíveis, não renderiza o menu
   if (options.length === 0) {
     return null;

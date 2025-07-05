@@ -1,27 +1,31 @@
 // BattleArea/MonsterSide.jsx
 import React from 'react';
 import CardStack from './CardStack';
-import Card from './Card';
 import './PlayerSide.css';
 
-export default function MonsterSide({ monsterCard, monsterPower, isPlayerTurn, onHelpMonster }) {
-  if (!monsterCard) return null;
+export default function MonsterSide({ monsterCards = [] }) {
+  if (!monsterCards.length) return null;
 
   return (
     <>
-      {!isPlayerTurn && (
-        <div className="side-button-wrapper">
-          <button className="help-button" onClick={onHelpMonster}>
-            😈 Ajudar Monstro
-          </button>
+      <div className="player-side-content">
+      {monsterCards.map((monster, index) => (
+        <div key={monster.id || index} className="side-holder">
+          <div className="holder-label">{monster.name}</div>
+          <CardStack cards={[monster]} />
+
+          <div className="added-by-label">
+            {monster.addedBy && (
+             <span>({monster.addedBy.username})</span>
+             )}
+          </div>
+
+          <div className="total-label">
+            Bônus: <span className="bonus-value">+{monster.bonus}</span>
+          </div>
+          
         </div>
-      )}
-      <div className="side-holder">
-        <div className="holder-label">{monsterCard.name}</div>
-        <CardStack cards={[monsterCard]} />
-        <div className="total-label">
-          Bônus: <span className="bonus-value">+{monsterPower}</span>
-        </div>
+      ))}
       </div>
     </>
   );

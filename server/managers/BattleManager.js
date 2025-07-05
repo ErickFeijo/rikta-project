@@ -7,13 +7,12 @@ class BattleManager {
   }
 
   startBattle(mainPlayer, monsterCardPlain) {
-    
     const monsterCard = new MonsterCard(monsterCardPlain);
 
     this.activeBattle = {
       mainPlayer,
       helperPlayer: null,
-      monsterCard
+      monsterCards: [monsterCard] // agora é uma lista
     };
   }
 
@@ -25,6 +24,27 @@ class BattleManager {
     this.activeBattle.helperPlayer = helperPlayer;
     return { success: true };
   }
+
+  addMonster(monsterCardPlain, addedByPlayer) {
+    if (!this.activeBattle) return { error: 'Nenhuma batalha ativa.' };
+
+    const monsterCard = new MonsterCard(monsterCardPlain);
+
+    // Adiciona o monstro com metadado de quem adicionou
+    this.activeBattle.monsterCards.push({
+      ...monsterCard,
+      addedBy: {
+        id: addedByPlayer.id,
+        username: addedByPlayer.username
+      }
+    });
+
+    return {
+      success: true,
+      message: `${monsterCard.name} foi adicionado ao combate por ${addedByPlayer.username}!`
+    };
+  }
+
 
   resetBattle() {
     this.activeBattle = null;
@@ -40,23 +60,22 @@ class BattleManager {
 
   getPublicState() {
     if (!this.activeBattle) {
-      // Retorna objeto padrão indicando batalha inativa
       return {
         active: false,
         mainPlayer: null,
         helperPlayer: null,
         playerPower: 0,
         monsterPower: 0,
-        monsterCard: null
+        monsterCards: []
       };
     }
 
-    const { mainPlayer, helperPlayer, monsterCard } = this.activeBattle;
+    const { mainPlayer, helperPlayer, monsterCards } = this.activeBattle;
 
     const mainPlayerPower = this.getEquippedBonus(mainPlayer);
     const helperPower = helperPlayer ? this.getEquippedBonus(helperPlayer) : 0;
     const totalPlayerPower = mainPlayerPower + helperPower;
-    const monsterPower = monsterCard?.bonus ?? 0;
+    const monsterPower = monsterCards.reduce((sum, m) => sum + (m.bonus || 0), 0);
 
     return {
       active: true,
@@ -74,39 +93,40 @@ class BattleManager {
       },
       playerPower: totalPlayerPower,
       monsterPower,
-      monsterCard: {
-        id: monsterCard.id,
-        name: monsterCard.name,
-        description: monsterCard.description,
-        bonus: monsterPower,
-        levels: monsterCard.levels ?? 1,
-        treasures: monsterCard.treasures ?? 1
-      }
+      monsterCards: monsterCards.map(m => ({
+        id: m.id,
+        name: m.name,
+        description: m.description,
+        bonus: m.bonus,
+        levels: m.levels ?? 1,
+        treasures: m.treasures ?? 1,
+        addedBy: m.addedBy
+      }))
     };
   }
 
   resolveCombat() {
     if (!this.activeBattle) return { error: 'Nenhuma batalha em andamento' };
 
-    const { mainPlayer, helperPlayer, monsterCard } = this.activeBattle;
+    const { mainPlayer, helperPlayer, monsterCards } = this.activeBattle;
 
     const mainPower = this.getEquippedBonus(mainPlayer);
     const helperPower = helperPlayer ? this.getEquippedBonus(helperPlayer) : 0;
     const playerPower = mainPower + helperPower;
-    const monsterPower = monsterCard.bonus;
+    const monsterPower = monsterCards.reduce((sum, m) => sum + (m.bonus || 0), 0);
 
     const victory = playerPower >= monsterPower;
 
     if (victory) {
-      const rewards = monsterCard.applyRewards(mainPlayer, helperPlayer, this.deckManager);
+      const rewards = monsterCards.map(monster => monster.applyRewards(mainPlayer, helperPlayer, this.deckManager));
       return {
         result: 'victory',
         winnerIds: [mainPlayer.id, helperPlayer?.id].filter(Boolean),
-        message: `${[mainPlayer.username, helperPlayer?.username].filter(Boolean).join(' e ')} venceram o monstro!`,
+        message: `${[mainPlayer.username, helperPlayer?.username].filter(Boolean).join(' e ')} venceram os monstros!`,
         rewards
       };
     } else {
-      const penalties = monsterCard.applyPenalties(mainPlayer);
+      const penalties = monsterCards.map(monster => monster.applyPenalties(mainPlayer));
       return {
         result: 'defeat',
         message: 'Os jogadores foram derrotados! Prepare-se para tentar fugir!',
@@ -123,8 +143,9 @@ class BattleManager {
 
     let penalties = null;
     if (!escaped) {
-      const { monsterCard, helperPlayer } = this.activeBattle;
-      penalties = monsterCard.applyPenalties(player, helperPlayer, this.deckManager);
+      penalties = this.activeBattle.monsterCards.map(monster =>
+        monster.applyPenalties(player, this.activeBattle.helperPlayer, this.deckManager)
+      );
     }
 
     return {
@@ -133,10 +154,9 @@ class BattleManager {
       message: escaped
         ? `${player.username} fugiu com sucesso!`
         : `${player.username} falhou na fuga!`,
-      penalties,
+      penalties
     };
   }
-
 }
 
 module.exports = BattleManager;

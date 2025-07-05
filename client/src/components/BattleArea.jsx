@@ -10,8 +10,6 @@ import './BattleArea.css';
 export default function BattleArea({
   gameState,
   battleState,
-  onHelpPlayer,
-  onHelpMonster,
   isPlayerTurn
 }) {
   const [showPlayerCards, setShowPlayerCards] = useState(false);
@@ -42,8 +40,6 @@ export default function BattleArea({
         <PlayerSide
           mainPlayer={battleState.mainPlayer}
           helperPlayer={battleState.helperPlayer}
-          isPlayerTurn={isPlayerTurn}
-          onHelp={() => onHelpPlayer && onHelpPlayer(battleState.mainPlayer.id)}
         />
       </div>
 
@@ -60,10 +56,7 @@ export default function BattleArea({
 
       <div className="battle-side enemy-side">
         <MonsterSide
-          monsterCard={battleState.monsterCard}
-          monsterPower={battleState.monsterPower}
-          isPlayerTurn={isPlayerTurn}
-          onHelpMonster={onHelpMonster}
+          monsterCards={battleState.monsterCards}
         />
       </div>
 

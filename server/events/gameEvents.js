@@ -77,8 +77,8 @@ module.exports = function registerGameEvents(io, socket) {
     }
 
     io.to(room).emit('flee_attempted', { result });
-    io.to(room).emit('state_updated', { reason: 'attemptFlee' });
-    io.to(room).emit('end_turn', { result });
+    // io.to(room).emit('state_updated', { reason: 'attemptFlee' });
+    // io.to(room).emit('end_turn', { result });
   });
 
   socket.on('help_player', ({ playerId }) => {
@@ -108,6 +108,22 @@ module.exports = function registerGameEvents(io, socket) {
 
     io.to(room).emit('state_updated', { reason: 'helpMonster' });
   });
+
+  socket.on('add_monster_to_combat', ({ cardId }) => {
+    const room = getRoomBySocketId(socket.id);
+    const game = getGameManager(room);
+    if (!room || !game) return;
+
+    const result = game.addMonsterToCombat(socket.id, cardId);
+
+    if (result?.error) {
+      socket.emit('errorMessage', result.error);
+      return;
+    }
+
+    io.to(room).emit('state_updated', { reason: 'addMonsterToCombat' });
+  });
+
 
   socket.on('finish_setup', () => {
     const room = getRoomBySocketId(socket.id);

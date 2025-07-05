@@ -31,6 +31,33 @@
   text-align: right;
 }
 
+
+.addedBy-label {
+  font-size: 18px;
+  font-weight: bold;
+  color: white;
+  margin-top: 10px;
+  text-shadow: 1px 1px 2px black;
+  text-align: right;
+}
+
+.added-by-label {
+  position: absolute;
+  top: 50px;
+  right: 10px;
+  font-size: 1rem;
+  color: #65db48; /* tom avermelhado */
+  font-weight: bold;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.side-holder {
+  position: relative;
+  /* demais estilos existentes */
+}
+
+
 .bonus-value {
   color: #ff6666;
   text-shadow: 0 0 4px #000;
@@ -42,4 +69,68 @@
   flex-direction: column;
   gap: 12px;
   align-items: center; /* opcional: centraliza os side-holders horizontalmente */
+}
+
+.card-detail-box {
+  position: absolute;
+  bottom: 10%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #222;
+  padding: 12px;
+  border-radius: 8px;
+  z-index: 100;
+  width: 80%;
+  box-shadow: 0 0 10px rgba(0,0,0,0.4);
+  color: white;
+}
+
+.card-detail-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  font-weight: bold;
+}
+
+.card-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+}
+
+.card-item {
+  width: 80px;
+  height: 120px;
+  background: #444;
+  border-radius: 6px;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.card-image {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: cover;
+}
+
+.card-detail-box .card-container {
+  width: 114.75px;
+  height: 158.1px;
+  transform: scale(1);
+  transform-origin: center;
+}
+
+.card-detail-box .card-title {
+  font-size: 15.3px;
+}
+
+.card-detail-box .card-details {
+  font-size: 12.75px;
+}
+
+.card-detail-box .card-bonus {
+  font-size: 20.4px;
 }

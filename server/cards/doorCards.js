@@ -9,15 +9,15 @@ const monsters = [
     bonus: 1,
     levels: 1,
     treasures: 1,
-    penaltiesText: 'Perde 1 carta da mão.',
+    penaltiesText: '-1 Nvl -1 carta da mão.',
     applyPenalties(mainPlayer) {
       if (mainPlayer.hand.length > 0) {
         const discarded = mainPlayer.hand.pop();
         return {
-          message: `${mainPlayer.username} perdeu uma carta da mão: ${discarded.name}`
+          message: `${mainPlayer.username} perdeu um nível e uma carta da mão: ${discarded.name}`
         };
       }
-      return { message: `${mainPlayer.username} não tinha cartas para perder.` };
+      return { message: `${mainPlayer.username} perdeu um nível. Mas não tinha cartas para perder.` };
     }
   },
   {
@@ -26,8 +26,8 @@ const monsters = [
     bonus: 2,
     levels: 1,
     treasures: 1,
-    rewardsText: 'Ganha 1 nível e um curso de "Zumbificação Digital".',
-    penaltiesText: 'Perde 1 nível por golpe digital.',
+    rewardsText: '+1 Nvl.',
+    penaltiesText: '-1 Nvl.',
     applyRewards(mainPlayer) {
       mainPlayer.level += 1;
       return {
@@ -47,10 +47,10 @@ const monsters = [
     bonus: 3,
     levels: 2,
     treasures: 1,
-    penaltiesText: 'Perde a próxima vez de jogar.',
+    penaltiesText: '-2 Nvl.',
     applyPenalties(mainPlayer) {
       return {
-        message: `${mainPlayer.username} foi atropelado e perde a próxima rodada!`
+        message: `${mainPlayer.username} foi atropelado e perdeu um nível!`
       };
     }
   },
@@ -60,7 +60,7 @@ const monsters = [
     bonus: 4,
     levels: 2,
     treasures: 2,
-    penaltiesText: 'Perde 2 níveis por overtraining.',
+    penaltiesText: '-2 Nvl.',
     applyPenalties(mainPlayer) {
       mainPlayer.level = Math.max(1, mainPlayer.level - 2);
       return {
@@ -74,20 +74,19 @@ const monsters = [
     bonus: 5,
     levels: 2,
     treasures: 2,
-    rewardsText: 'Todos ganham 1 tesouro extra por radiação.',
-    penaltiesText: 'Perde todos os equipamentos.',
+    rewardsText: '+2 Nvl +2 Tes. ',
+    penaltiesText: '-2 Nvl Perde todos os equipamentos.',
     applyRewards(mainPlayer, helperPlayer, deckManager) {
       const treasure = deckManager.drawTreasureCard();
       mainPlayer.hand.push(treasure);
-      if (helperPlayer) helperPlayer.hand.push(treasure);
       return {
-        message: `Radiação afetou tudo! ${mainPlayer.username} e ${helperPlayer?.username || 'ninguém'} ganharam 1 tesouro cada.`
+        message: `${mainPlayer.username} ganhou 1 tesouro e 1 nível.`
       };
     },
     applyPenalties(mainPlayer) {
       mainPlayer.equipment = {};
       return {
-        message: `${mainPlayer.username} derreteu e perdeu todos os equipamentos!`
+        message: `${mainPlayer.username} derreteu e perdeu todos os equipamentos! E perdeu um nível.`
       };
     }
   },
@@ -97,7 +96,7 @@ const monsters = [
     bonus: 6,
     levels: 3,
     treasures: 2,
-    penaltiesText: 'Volta ao nível 1 por burnout.',
+    penaltiesText: 'Nvl = 1.',
     applyPenalties(mainPlayer) {
       mainPlayer.level = 1;
       return {
@@ -125,7 +124,7 @@ const monsters = [
     bonus: 1,
     levels: 1,
     treasures: 1,
-    rewardsText: 'Adota o zumbi e ganha 1 nível.',
+    rewardsText: '+1 Nvl.',
     applyRewards(mainPlayer) {
       mainPlayer.level += 1;
       return {

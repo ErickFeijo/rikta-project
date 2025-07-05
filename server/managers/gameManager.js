@@ -94,6 +94,45 @@ class GameManager {
     return { success: true, message: 'Ajuda ao monstro não implementada ainda.' };
   }
 
+  addMonsterToCombat(socketId, cardId) {
+    const player = this.players.find(p => p.id === socketId);
+    if (!player) return { error: 'Jogador não encontrado.' };
+
+    if (this.phase !== 'combat') {
+      return { error: 'Só é possível ajudar o monstro durante um combate.' };
+    }
+
+    if (!this.battleManager.activeBattle) {
+      return { error: 'Nenhum combate em andamento.' };
+    }
+
+    // ⚠️ Impede o jogador da vez de adicionar monstro contra ele mesmo
+    const mainPlayer = this.battleManager.activeBattle.mainPlayer;
+    if (mainPlayer.id === socketId) {
+      return { error: 'Você não pode adicionar monstros ao seu próprio combate.' };
+    }
+
+    const cardIndex = player.hand.findIndex(c => c.id === cardId);
+    if (cardIndex === -1) {
+      return { error: 'Carta não encontrada na mão.' };
+    }
+
+    const card = player.hand[cardIndex];
+    if (card.type !== 'monster') {
+      return { error: 'Apenas cartas de monstro podem ser adicionadas ao combate.' };
+    }
+
+    // Remove da mão e envia para o campo de batalha
+    player.hand.splice(cardIndex, 1);
+    this.battleManager.addMonster(card, player);
+
+    return {
+      success: true,
+      card
+    };
+  }
+
+
   equipCard(playerId, cardId) {
     const player = this.players.find(p => p.id === playerId);
     if (!player) return { error: 'Jogador não encontrado' };

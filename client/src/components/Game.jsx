@@ -25,13 +25,8 @@ export default function Game({ room, username }) {
       alert(msg);
     });
     
-    // socket.on('end_turn', ({ result }) => {
-    //   setNextPlayerName(result.nextPlayerTurn); 
-    // });
-
     socket.on('flee_attempted', ({ result }) => {
       setFleeResult(result);
-      // setNextPlayerName(result.nextPlayer.username);
     });
 
     socket.emit('get_game_state', { room });
@@ -50,15 +45,6 @@ export default function Game({ room, username }) {
   const handleRefreshGameState = () => {
     socket.emit('get_game_state', { room });
   };
-
-  const handleHelpPlayer = (playerId) => {
-    socket.emit('help_player', { playerId });
-  };
-
-  const handleHelpMonster = () => {
-    socket.emit('help_monster');
-  };
-
 
   if (!gameState) return <p>Carregando estado do jogo...</p>;
 
@@ -105,8 +91,6 @@ export default function Game({ room, username }) {
         playerName={username}
         gameState={gameState}
         onKickDoor={handleKickDoor}
-        onHelpPlayer={handleHelpPlayer}
-        onHelpMonster={handleHelpMonster}
       />
 
      {fleeResult && (
@@ -119,6 +103,7 @@ export default function Game({ room, username }) {
             // Agora sim, ao sumir, mostra a transição de turno
             if (fleeResult.data?.nextPlayer?.username) {
               setNextPlayerName(fleeResult.data.nextPlayer.username);
+              handleRefreshGameState();
             }
           }}
         />
