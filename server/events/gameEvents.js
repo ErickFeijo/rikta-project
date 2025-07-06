@@ -61,8 +61,8 @@ module.exports = function registerGameEvents(io, socket) {
       return;
     }
 
-    io.to(room).emit('combat_resolved', result);
-    io.to(room).emit('state_updated', { reason: 'resolveCombat' });
+    io.to(room).emit('battle_result', { result });
+    // io.to(room).emit('state_updated', { reason: 'resolveCombat' });
   });
 
   socket.on('attempt_flee', () => {

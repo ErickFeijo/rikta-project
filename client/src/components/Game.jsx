@@ -3,11 +3,13 @@ import React, { useEffect, useState } from 'react';
 import GameBoard from './GameBoard';
 import FleeAttemptResult from './FleeAttemptResult';
 import TurnTransition from './TurnTransition';
+import BattleResult from './BattleResult';
 import { socket } from '../socket';
 
 export default function Game({ room, username }) {
   const [gameState, setGameState] = useState(null);
   const [fleeResult, setFleeResult] = useState(null);
+  const [battleResult, setBattleResult] = useState(null);
   const [nextPlayerName, setNextPlayerName] = useState(null);
 
   useEffect(() => {
@@ -29,12 +31,18 @@ export default function Game({ room, username }) {
       setFleeResult(result);
     });
 
+    socket.on('battle_result', ({ result }) => {
+      setBattleResult(result);
+    });
+
     socket.emit('get_game_state', { room });
 
     return () => {
       socket.off('game_state');
+      socket.off('flee_attempted');
+      socket.off('state_updated');
       socket.off('errorMessage');
-      socket.off('cardOpened');
+      socket.off('battle_result');
     };
   }, [room, username]);
 
@@ -109,6 +117,19 @@ export default function Game({ room, username }) {
         />
       )}
 
+      {battleResult && (
+        <BattleResult
+          playerName={username}
+          result={battleResult}
+          onClose={() => {
+            setBattleResult(null);
+            if (battleResult.data?.nextPlayer?.username) {
+              setNextPlayerName(battleResult.data.nextPlayer.username);
+              handleRefreshGameState();
+            }
+          }}
+        />
+      )}
 
       {nextPlayerName && (
         <TurnTransition

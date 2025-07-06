@@ -1,8 +1,9 @@
+// === generateTreasureCards.js ===
 const CardTypes = require('../constants/cardTypes');
 
 function generateTreasureCards() {
   return [
-    // HEAD
+    // EQUIPAMENTOS
     {
       name: 'Capacete de Obra',
       type: CardTypes.EQUIPMENT,
@@ -19,8 +20,6 @@ function generateTreasureCards() {
       bonus: 2,
       copies: 1
     },
-
-    // BODY
     {
       name: 'Colete de Entregador',
       type: CardTypes.EQUIPMENT,
@@ -37,8 +36,6 @@ function generateTreasureCards() {
       bonus: 2,
       copies: 1
     },
-
-    // LEGS
     {
       name: 'Calça Camuflada',
       type: CardTypes.EQUIPMENT,
@@ -55,8 +52,6 @@ function generateTreasureCards() {
       bonus: 2,
       copies: 1
     },
-
-    // FEET
     {
       name: 'Tênis de Corrida',
       type: CardTypes.EQUIPMENT,
@@ -73,8 +68,6 @@ function generateTreasureCards() {
       bonus: 2,
       copies: 1
     },
-
-    // LEFT/RIGHT HAND – Itens de 1 ou 2 mãos
     {
       name: 'Taco de Baseball com Pregos',
       type: CardTypes.EQUIPMENT,
@@ -107,25 +100,61 @@ function generateTreasureCards() {
       bonus: 3,
       copies: 1
     },
-
-    // HELPER
     {
       name: 'Gato de Telhado',
       type: CardTypes.EQUIPMENT,
       description: 'Bônus +1. Espanta zumbis com miados.',
-      bonus: 1,
       slot: 'helper',
+      bonus: 1,
       copies: 2
     },
     {
       name: 'Velho do Armazém',
       type: CardTypes.EQUIPMENT,
       description: 'Bônus +2. Sabe tudo. Não corre, mas dá dica.',
-      bonus: 2,
       slot: 'helper',
+      bonus: 2,
       copies: 1
     },
+
+    // ITENS DE USO Único
+    {
+      name: 'Spray de Pimenta',
+      type: CardTypes.ONE_SHOT,
+      description: 'Dá +2 ao jogador em combate. Zumbi odeia ardência.',
+      bonus: 2,
+      target: 'player',
+      copies: 2,
+      applyEffect: (player, context) => {
+        context.combat.addBonusToPlayer(player.id, 2);
+      },
+      effectText: (player) => `${player.username} usou Spray de Pimenta. Zumbi saiu lacrimejando!`
+    },
+    {
+      name: 'Barulho de Tiro',
+      type: CardTypes.ONE_SHOT,
+      description: 'Atrai mais zumbis. Monstro ganha +5.',
+      bonus: 5,
+      target: 'monster',
+      copies: 1,
+      applyEffect: (_, context) => {
+        context.combat.addBonusToMonster(5);
+      },
+      effectText: () => `O som de tiro ecoou! Mais zumbis chegaram.`
+    },
+    {
+      name: 'Bússola do Sobrevivente',
+      type: CardTypes.ITEM,
+      description: 'Permite escapar automaticamente de um combate uma vez.',
+      effect: 'autoEscape',
+      copies: 1,
+      applyEffect: (player) => {
+        player.flags.autoEscape = true;
+      },
+      effectText: (player) => `${player.username} ativou a Bússola do Sobrevivente e fugiu na manha.`
+    }
   ];
 }
 
 module.exports = generateTreasureCards;
+

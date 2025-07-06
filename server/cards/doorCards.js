@@ -1,6 +1,7 @@
 const { v4: uuidv4 } = require('uuid');
 const CardTypes = require('../constants/cardTypes');
 const MonsterCard = require('../models/MonsterCard');
+const CurseCard = require('../models/CurseCard');
 
 const monsters = [
   {
@@ -134,25 +135,63 @@ const monsters = [
   }
 ];
 
+const curses = [
+  // {
+  //   name: 'Tropeçou no Gato',
+  //   description: 'Perde um nível. Gato maldito.',
+  //   effect: 'loseLevel',
+  //   copies: 1,
+  //   applyEffect: (player) => {
+  //     player.level = Math.max(player.level - 1, 1);
+  //   },
+  //   effectText: (player) => `${player.username} tropeçou no gato e caiu feio. Perdeu 1 nível!`
+  // },
+  // {
+  //   name: 'Pé na Poça',
+  //   description: 'Perde o bônus do equipamento nos pés.',
+  //   effect: 'loseFeetBonus',
+  //   copies: 1,
+  //   applyEffect: (player) => {
+  //     if (player.equipment.feet) {
+  //       player.equipment.feet.bonus = 0;
+  //     }
+  //   },
+  //   effectText: (player) => `${player.username} encharcou os pés. Tênis virou sabão!`
+  // },
+  // {
+  //   name: 'Dor nas Costas',
+  //   description: 'Descarte seu equipamento de corpo.',
+  //   effect: 'discardBodySlot',
+  //   copies: 1,
+  //   applyEffect: (player) => {
+  //     if (player.equipment.body) {
+  //       delete player.equipment.body;
+  //     }
+  //   },
+  //   effectText: (player) => `${player.username} travou as costas e largou o colete!`
+  // }
+];
+
 function generateDoorDeck() {
   const deck = [];
 
   monsters.forEach(monster => {
     const copies = monster.bonus <= 2 ? 3 : 2;
-
     for (let i = 0; i < copies; i++) {
       deck.push(new MonsterCard({
         id: uuidv4(),
-        name: monster.name,
-        description: monster.description,
-        bonus: monster.bonus,
-        levels: monster.levels,
-        treasures: monster.treasures,
-        rewardsText: monster.rewardsText,
-        penaltiesText: monster.penaltiesText,
-        type: CardTypes.MONSTER,
-        applyRewards: monster.applyRewards,
-        applyPenalties: monster.applyPenalties
+        ...monster,
+        type: CardTypes.MONSTER
+      }));
+    }
+  });
+
+  curses.forEach(curse => {
+    for (let i = 0; i < curse.copies; i++) {
+      deck.push(new CurseCard({
+        id: uuidv4(),
+        ...curse,
+        type: CardTypes.CURSE
       }));
     }
   });

@@ -106,34 +106,47 @@ class BattleManager {
   }
 
   resolveCombat() {
-    if (!this.activeBattle) return { error: 'Nenhuma batalha em andamento' };
+  if (!this.activeBattle) return { error: 'Nenhuma batalha em andamento' };
 
-    const { mainPlayer, helperPlayer, monsterCards } = this.activeBattle;
+  const { mainPlayer, helperPlayer, monsterCards } = this.activeBattle;
 
-    const mainPower = this.getEquippedBonus(mainPlayer);
-    const helperPower = helperPlayer ? this.getEquippedBonus(helperPlayer) : 0;
-    const playerPower = mainPower + helperPower;
-    const monsterPower = monsterCards.reduce((sum, m) => sum + (m.bonus || 0), 0);
+  const mainPower = this.getEquippedBonus(mainPlayer);
+  const helperPower = helperPlayer ? this.getEquippedBonus(helperPlayer) : 0;
+  const playerPower = mainPower + helperPower;
+  const monsterPower = monsterCards.reduce((sum, m) => sum + (m.bonus || 0), 0);
 
-    const victory = playerPower >= monsterPower;
+  const victory = playerPower >= monsterPower;
 
-    if (victory) {
-      const rewards = monsterCards.map(monster => monster.applyRewards(mainPlayer, helperPlayer, this.deckManager));
-      return {
-        result: 'victory',
-        winnerIds: [mainPlayer.id, helperPlayer?.id].filter(Boolean),
-        message: `${[mainPlayer.username, helperPlayer?.username].filter(Boolean).join(' e ')} venceram os monstros!`,
-        rewards
-      };
-    } else {
-      const penalties = monsterCards.map(monster => monster.applyPenalties(mainPlayer));
-      return {
-        result: 'defeat',
-        message: 'Os jogadores foram derrotados! Prepare-se para tentar fugir!',
-        penalties
-      };
-    }
+  const attackerList = [mainPlayer.username, helperPlayer?.username].filter(Boolean);
+  const attackerNames = attackerList.join(' e ');
+  const monsterNames = monsterCards.map(m => m.name).join(', ');
+
+  if (victory) {
+    const rewards = monsterCards.map(monster => monster.applyRewards(mainPlayer, helperPlayer, this.deckManager));
+    return {
+      outcome: 'win',
+      attacker: mainPlayer.username,
+      helper: helperPlayer?.username || null,
+      monster: monsterNames,
+      attackerPower: playerPower,
+      monsterPower: monsterPower,
+      message: `${attackerNames} ${attackerList.length > 1 ? 'venceram' : 'venceu'} ${monsterNames}!`,
+      rewards: rewards,
+    };
+  } else {
+    const penalties = monsterCards.map(monster => monster.applyPenalties(mainPlayer));
+    return {
+      outcome: 'lose',
+      attacker: mainPlayer.username,
+      helper: helperPlayer?.username || null,
+      monster: monsterNames,
+      attackerPower: playerPower,
+      monsterPower: monsterPower,
+      message: `${attackerNames} ${attackerList.length > 1 ? 'foram derrotados por' : 'foi derrotado por'} ${monsterNames}!`,
+      penalties: penalties,
+    };
   }
+}
 
   attemptFlee(player) {
     if (!this.activeBattle) return { error: 'Nenhuma batalha em andamento' };

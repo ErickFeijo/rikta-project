@@ -58,7 +58,7 @@ export default function FleeAttemptResult({ result, onClose, playerName }) {
         <div className="effect-phase">
           <div className="effect-title">🎭 Aplicando efeitos da carta...</div>
           <div className={`effect-text effect-bad`}>
-            {result.penalties?.message || 'Sem penalidade.'}
+            {result.penalties[0]?.message || 'Sem penalidade.'}
           </div>
         </div>
       )}

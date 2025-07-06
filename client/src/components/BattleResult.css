@@ -1,0 +1,15 @@
+.battle-stats {
+  font-size: 20px;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.3);
+  padding: 14px 20px;
+  border-radius: 10px;
+  margin-bottom: 24px;
+  line-height: 1.6;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+}
+
+.result-text.draw {
+  color: #ffd27f;
+  text-shadow: 0 0 6px #f0c000;
+}

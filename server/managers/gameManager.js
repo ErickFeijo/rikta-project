@@ -172,12 +172,28 @@ class GameManager {
 
   resolveCombat() {
     const result = this.battleManager.resolveCombat();
-    if (result.result === 'victory') {
-      this.phase = 'loot';
-    } else {
-      this.phase = 'flee';
-    }
-    return result;
+    
+    this.phase = 'effect';
+    this.endTurn();
+
+    const currentTurnPlayer = this.turnManager.getCurrentPlayer();
+
+    // if (result.result === 'victory') {
+    //   this.phase = 'loot';
+    // } else {
+    //   this.phase = 'flee';
+    // }
+
+    return {
+      type: 'combat_resolved',
+      data: {
+        ...result,
+        nextPlayer: {
+          id: currentTurnPlayer.id,
+          username: currentTurnPlayer.username,
+        }
+      }
+    };
   }
 
   attemptFlee(playerId) {
